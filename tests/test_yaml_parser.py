@@ -50,7 +50,7 @@ def test_check_library_level_attributes_valid(
     assert valid_lib_level_attributes_yaml_parser.check_library_level_attributes()
     assert not caplog.records
 
-
+# check_library_level_attributes() test - check that function returns false when yaml is invalid and that there was logging 
 def test_check_library_level_attributes_invalid(invalid_lib_level_attributes_yaml_parser, caplog):
     assert not invalid_lib_level_attributes_yaml_parser.check_library_level_attributes()
     found_error_message_1 = False
@@ -64,5 +64,6 @@ def test_check_library_level_attributes_invalid(invalid_lib_level_attributes_yam
 
     assert found_error_message_1 and found_error_message_2
 
+# TODO - add tests for this later (once more stuff is complete)
 def test_check_library_level():
     pass
