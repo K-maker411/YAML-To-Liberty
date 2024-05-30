@@ -1,0 +1,4 @@
+library:
+  nom: "gsc145nm"
+  time_unit: "1ns"
+  slow_upper_threshold_pct_rise: 80
