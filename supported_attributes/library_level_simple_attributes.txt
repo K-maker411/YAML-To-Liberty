@@ -3,7 +3,6 @@ comment
 current_unit
 date
 delay_model
-Liberty
 em_temp_degradation_factor
 fpga_technology
 in_place_swap_mode
