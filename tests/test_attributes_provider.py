@@ -3,18 +3,40 @@ import pytest
 from src.attributes_provider import AttributesProvider
 
 SIMPLE_ATTRIBUTES_LIST = {
-    "bus_naming_style", "comment", "current_unit", "date", "delay_model",
-    "em_temp_degradation_factor", "fpga_technology", "in_place_swap_mode",
-    "input_threshold_pct_fall", "input_threshold_pct_rise",
-    "leakage_power_unit", "nom_calc_mode", "nom_process", "nom_temperature",
-    "nom_voltage", "output_threshold_pct_fall", "output_threshold_pct_rise",
-    "piece_type", "power_model", "preferred_output_pad_slew_rate_control",
-    "preferred_input_pad_voltage", "preferred_output_pad_voltage",
-    "pulling_resistance_unit", "revision", "simulation",
-    "slew_derate_from_library", "slew_lower_threshold_pct_fall",
-    "slew_lower_threshold_pct_rise", "slew_upper_threshold_pct_fall",
-    "slew_upper_threshold_pct_rise", "time_unit", "voltage_unit"
+  "bus_naming_style": ["string"],
+  "comment": ["string"],
+  "current_unit": ["valueenum"],
+  "date": ["date"],
+  "delay_model": ["valueenum"],
+  "em_temp_degradation_factor": ["float"],
+  "fpga_technology": ["fpga_technology_name_string"],
+  "in_place_swap_mode": ["valueenum"],
+  "input_threshold_pct_fall": ["trip_point_value"],
+  "input_threshold_pct_rise": ["trip_point_value"],
+  "leakage_power_unit": ["valueenum"],
+  "nom_calc_mode": ["nameid"],
+  "nom_process": ["float"],
+  "nom_temperature": ["float"],
+  "nom_voltage": ["float"],
+  "output_threshold_pct_fall": ["trip_point_value"],
+  "output_threshold_pct_rise": ["trip_point_value"],
+  "piece_type": ["valueenum"],
+  "power_model": ["table_lookup", "polynomial"],
+  "preferred_output_pad_slew_rate_control": ["valueenum"],
+  "preferred_input_pad_voltage": ["string"],
+  "preferred_output_pad_voltage": ["string"],
+  "pulling_resistance_unit": ["1ohm", "10ohm", "100ohm", "1kohm"],
+  "revision": ["float", "string"],
+  "simulation": [True, False],
+  "slew_derate_from_library": ["derate_value"],
+  "slew_lower_threshold_pct_fall": ["trip_point_value"],
+  "slew_lower_threshold_pct_rise": ["trip_point_value"],
+  "slew_upper_threshold_pct_fall": ["trip_point_value"],
+  "slew_upper_threshold_pct_rise": ["trip_point_value"],
+  "time_unit": ["1ps", "10ps", "100ps", "1ns"],
+  "voltage_unit": ["1mV", "10mV", "100mV", "1V"]
 }
+
 
 
 def test_get_library_level_simple_attributes(attributes_provider):

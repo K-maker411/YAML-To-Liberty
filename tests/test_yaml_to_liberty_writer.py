@@ -15,9 +15,11 @@ def yaml_with_simple_lib_level_attributes():
 def yaml_to_liberty_writer(yaml_with_simple_lib_level_attributes, attributes_provider):
   return YamlToLibertyWriter(yaml_with_simple_lib_level_attributes, attributes_provider)
 
-def test_get_simple_library_level_attributes_as_string(yaml_to_liberty_writer):
-  assert yaml_to_liberty_writer.get_simple_library_level_attribute_as_string("time_unit") == "time_unit : \"1ns\";\n"
-  assert yaml_to_liberty_writer.get_simple_library_level_attribute_as_string("slew_upper_threshold_pct_rise") == "slew_upper_threshold_pct_rise : 80;\n"
+def test_get_lib_level_attributes_as_string(yaml_to_liberty_writer):
+  string_thing = yaml_to_liberty_writer.get_lib_level_attributes_as_string()
+  print(f"String thing: {string_thing}")
+  
+  assert yaml_to_liberty_writer.get_lib_level_attributes_as_string() == "time_unit : \"1ns\";\nslew_upper_threshold_pct_rise : 80;\n"
   
   
   

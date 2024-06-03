@@ -1,0 +1,9 @@
+{
+  "capacitive_load_unit": {"value": "float", "unit": "unitenum"},
+  "default_part": {"default_part_name": "string", "speed_grade": "string"},
+  "define": {"attribute_name": "string", "group_name": "string", "attribute_type": "string"},
+  "define_cell_area": {"area_name": "string", "resource_type": ["pad_slots", "pad_input_driver_sites", "pad_output_driver_sites", "pad_driver_sites"]},
+  "define_group": {"group": "string", "parent_name": "string"},
+  "library_features": {"value": ["report_delay_calculation", "report_noise_calculation", "report_user_data", "allow_update_attribute"]},
+  
+}
