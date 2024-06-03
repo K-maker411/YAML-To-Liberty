@@ -29,5 +29,5 @@
   "default_wire_load_capacitance": {"type": ["float"]},
   "default_wire_load_mode": {"type": ["top", "segmented", "enclosed"]},
   "default_wire_load_resistance": {"type": ["float"]},
-  "default_wire_load_selection": {"type": ["name"]},
+  "default_wire_load_selection": {"type": ["name"]}
 }

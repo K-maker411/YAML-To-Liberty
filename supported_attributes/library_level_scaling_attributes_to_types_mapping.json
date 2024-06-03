@@ -67,7 +67,6 @@
   "k_temp_rise_transition": {"type": ["float"]},
   "k_temp_rise_wire_resistance": {"type": ["float"]},
   "k_temp_setup_fall": {"type": ["float"]},
-  "k_temp_rise_wire_resistance": {"type": ["float"]},
   "k_temp_setup_rise": {"type": ["float"]},
   "k_temp_skew_fall": {"type": ["float"]},
   "k_temp_skew_rise": {"type": ["float"]},

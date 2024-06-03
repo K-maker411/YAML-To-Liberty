@@ -5,7 +5,23 @@ class YamlToLibertyWriter:
     self.yaml_file = yaml.safe_load(yaml_file_read_stream)
     self.attributes_provider = attributes_provider
   
+  def get_string_attr_as_string(self, attr):
+    # we know the attr is a string, so return string with double quotes around it
+    return attr + " : \"" + self.yaml_file.get("library").get(attr) + "\";\n"
   
+  def get_float_attr_as_string(self, attr):
+    return attr + " : " + str(self.yaml_file.get("library").get(attr)) + ";\n"
+
+  # flow control function that gets the type from associated json file (including "level")
+  def get_string_from_attr_type(self, attr, level_dict):
+    type_of_attr_in_level = level_dict.get(attr).get("type")
+    if (type_of_attr_in_level == "float"):
+      return self.get_float_attr_as_string(attr)
+    # TODO - edit this later, for now everything that's not a float will be string
+    else:
+      return self.get_string_attr_as_string(attr)
+    
+
   def get_simple_library_level_attribute_as_string(self, attr):
     # if the attribute is in the set of simple, default, or scaling library-level attributes, get the string in the .lib format
     if attr in self.attributes_provider.get_library_level_simple_attributes():

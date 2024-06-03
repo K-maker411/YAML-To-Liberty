@@ -30,5 +30,5 @@
   "slew_upper_threshold_pct_fall": {"type": ["trip_point_value"]},
   "slew_upper_threshold_pct_rise": {"type": ["trip_point_value"]},
   "time_unit": {"type": ["1ps", "10ps", "100ps", "1ns"]},
-  "voltage_unit": {"type": ["1mV", "10mV", "100mV", "1V"]},
+  "voltage_unit": {"type": ["1mV", "10mV", "100mV", "1V"]}
 }
