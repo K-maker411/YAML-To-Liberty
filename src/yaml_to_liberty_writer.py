@@ -23,13 +23,27 @@ class YamlToLibertyWriter:
   # flow control function that gets the type from associated json file (including "level")
   def get_string_from_attr_type(self, attr, level_dict):
     # type of attr in level will be a list of strings or booleans holding the potential types/values this attribute can have
-    type_of_attr_in_level = level_dict.get(attr)
-    if ("float" in type_of_attr_in_level or "trip_point_value" in type_of_attr_in_level or type_of_attr_in_level == [True, False]):
+
+    # if the value at a given key is a list, that means the attribute can be one of several values (but NOT types)
+    if isinstance(level_dict.get(attr), list):
+      # for these, we can just return the attr value without quotes on either side
       return self.get_attr_as_string_basic(attr)
-      
-    # TODO - edit this later, for now everything that's not a float (or float-like) on lib-level will be string
+    # if the value at a given key is a dict, that means the attribute has at least one possible type (but possibly more, e.g. name and name_list)
+    elif isinstance(level_dict.get(attr), dict):
+      # get list of types
+      type_of_attr_in_level = level_dict.get(attr).get("type")
+      # if no quotes or anything are required to be added, just return the value with the attribute name is the specified format
+      if ("float" in type_of_attr_in_level or "trip_point_value" in type_of_attr_in_level or type_of_attr_in_level == [True, False] or "valueenum" in type_of_attr_in_level):
+        return self.get_attr_as_string_basic(attr)
+        
+      # TODO - edit this later, for now everything that's not a float (or float-like) on lib-level will be string
+      else:
+        return self.get_string_attr_as_string(attr)
+        
+    # this case should never be called unless there's an error in the YAML - if so, just don't add anything to the string outside,
+    # so return empty string here
     else:
-      return self.get_string_attr_as_string(attr)
+      return ""
 
   def get_lib_level_attributes_as_string(self):
     # this could be improved a bit by not having to check directly for which "complexity level" an attribute belongs to,
