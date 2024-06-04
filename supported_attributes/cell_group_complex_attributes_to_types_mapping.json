@@ -1,0 +1,6 @@
+{
+    "pin_equal": {"type": "name_list"},
+    "pin_opposite": {"name_list_1": "name_list", "name_list_2": "name_list"},
+    "rail_connection": {"connection_name": "string", "power_supply_name": "string"},
+    "resource_usage": {"resource_name": "string", "number_of_resources": "integer"}
+}
