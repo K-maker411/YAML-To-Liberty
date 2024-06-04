@@ -1,0 +1,234 @@
+{
+  "bit_width": {
+      "type": "integer"
+  },
+  "capacitance": {
+      "type": "float"
+  },
+  "clock": [
+      "true",
+      "false"
+  ],
+  "clock_gate_clock_pin": [
+      "true",
+      "false"
+  ],
+  "clock_gate_enable_pin": [
+      "true",
+      "false"
+  ],
+  "clock_gate_test_pin": [
+      "true",
+      "false"
+  ],
+  "clock_gate_obs_pin": [
+      "true",
+      "false"
+  ],
+  "clock_gate_out_pin": [
+      "true",
+      "false"
+  ],
+  "complementary_pin": {
+      "type": "string"
+  },
+  "connection_class": {
+      "type": "string"
+  },
+  "direction": [
+      "input",
+      "output",
+      "inout",
+      "internal"
+  ],
+  "dont_fault": [
+      "sa0",
+      "sa1",
+      "sao1"
+  ],
+  "drive_current": {
+      "type": "float"
+  },
+  "driver_type": [
+      "pull_up",
+      "pull_down",
+      "open_drain",
+      "open_source",
+      "bus_hold",
+      "resistive",
+      "resistive_0",
+      "resistive_1"
+  ],
+  "fall_capacitance": {
+      "type": "float"
+  },
+  "fall_current_slope_after_threshold": {
+      "type": "float"
+  },
+  "fall_current_slope_before_threshold": {
+      "type": "float"
+  },
+  "fall_time_after_threshold": {
+      "type": "float"
+  },
+  "fall_time_before_threshold": {
+      "type": "float"
+  },
+  "fanout_load": {
+      "type": "float"
+  },
+  "fault_model": {
+      "type": "string"
+  },
+  "function": {
+      "type": "string"
+  },
+  "has_builtin_pad": {
+      "type": "boolean"
+  },
+  "hysteresis": [
+      "true",
+      "false"
+  ],
+  "input_map": {
+      "type": "string"
+  },
+  "input_signal_level": {
+      "type": "string"
+  },
+  "input_voltage": {
+      "type": "string"
+  },
+  "internal_node": {
+      "type": "string"
+  },
+  "inverted_output": [
+      "true",
+      "false"
+  ],
+  "is_pad": [
+      "true",
+      "false"
+  ],
+  "max_capacitance": {
+      "type": "float"
+  },
+  "max_fanout": {
+      "type": "float"
+  },
+  "max_input_noise_width": {
+      "type": "float"
+  },
+  "max_transition": {
+      "type": "float"
+  },
+  "min_capacitance": {
+      "type": "float"
+  },
+  "min_fanout": {
+      "type": "float"
+  },
+  "min_input_noise_width": {
+      "type": "float"
+  },
+  "min_period": {
+      "type": "float"
+  },
+  "min_pulse_width_high": {
+      "type": "float"
+  },
+  "min_pulse_width_low": {
+      "type": "float"
+  },
+  "min_transition": {
+      "type": "float"
+  },
+  "multicell_pad_pin": [
+      "true",
+      "false"
+  ],
+  "nextstate_type": [
+      "data",
+      "preset",
+      "clear",
+      "load",
+      "scan_in",
+      "scan_enable"
+  ],
+  "output_signal_level": {
+      "type": "string"
+  },
+  "output_voltage": {
+      "type": "string"
+  },
+  "pin_func_type": [
+      "clock_enable",
+      "active_high",
+      "active_low",
+      "active_rising",
+      "active_falling"
+  ],
+  "prefer_tied": [
+      "0",
+      "1"
+  ],
+  "primary_output": [
+      "true",
+      "false"
+  ],
+  "pulling_current": {
+      "type": "current value"
+  },
+  "pulling_resistance": {
+      "type": "resistance value"
+  },
+  "rise_capacitance": {
+      "type": "float"
+  },
+  "rise_current_slope_after_threshold": {
+      "type": "float"
+  },
+  "rise_current_slope_before_threshold": {
+      "type": "float"
+  },
+  "rise_time_after_threshold": {
+      "type": "float"
+  },
+  "rise_time_before_threshold": {
+      "type": "float"
+  },
+  "signal_type": [
+      "test_scan_in",
+      "test_scan_in_inverted",
+      "test_scan_out",
+      "test_scan_out_inverted",
+      "test_scan_enable",
+      "test_scan_enable_inverted",
+      "test_scan_clock",
+      "test_scan_clock_a",
+      "test_scan_clock_b",
+      "test_clock"
+  ],
+  "slew_control": [
+      "low",
+      "medium",
+      "high",
+      "none"
+  ],
+  "state_function": {
+      "type": "string"
+  },
+  "test_output_only": [
+      "true",
+      "false"
+  ],
+  "three_state": {
+      "type": "string"
+  },
+  "vhdl_name": {
+      "type": "string"
+  },
+  "x_function": {
+      "type": "string"
+  }
+}

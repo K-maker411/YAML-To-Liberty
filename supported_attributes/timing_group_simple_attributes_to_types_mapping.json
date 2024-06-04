@@ -1,0 +1,127 @@
+{
+    "clock_gating_flag": [
+        "true",
+        "false"
+    ],
+    "default_timing": [
+        "true",
+        "false"
+    ],
+    "fall_resistance": {
+        "type": "float"
+    },
+    "fpga_arc_condition": {
+        "type": "Boolean expression"
+    },
+    "fpga_domain_style": {
+        "type": "name"
+    },
+    "interdependence_id": {
+        "type": "integer"
+    },
+    "intrinsic_fall": {
+        "type": "float"
+    },
+    "intrinsic_rise": {
+        "type": "float"
+    },
+    "related_bus_equivalent": {
+        "type": "string"
+    },
+    "related_bus_pins": {
+        "type": "string"
+    },
+    "related_output_pin": {
+        "type": "name"
+    },
+    "related_pin": {
+        "type": "string"
+    },
+    "rise_resistance": {
+        "type": "float"
+    },
+    "sdf_cond": {
+        "type": "SDF expression"
+    },
+    "sdf_cond_end": {
+        "type": "SDF expression"
+    },
+    "sdf_cond_start": {
+        "type": "SDF expression"
+    },
+    "sdf_edges": {
+        "type": "SDF edge type"
+    },
+    "slope_fall": {
+        "type": "float"
+    },
+    "slope_rise": {
+        "type": "float"
+    },
+    "steady_state_resistance_above_high": {
+        "type": "float"
+    },
+    "steady_state_resistance_below_low": {
+        "type": "float"
+    },
+    "steady_state_resistance_high": {
+        "type": "float"
+    },
+    "steady_state_resistance_low": {
+        "type": "float"
+    },
+    "tied_off": {
+        "type": "Boolean"
+    },
+    "timing_sense": [
+        "positive_unate",
+        "negative_unate",
+        "non_unate"
+    ],
+    "timing_type": [
+        "combinational",
+        "combinational_rise",
+        "combinational_fall",
+        "three_state_disable",
+        "three_state_disable_rise",
+        "three_state_disable_fall",
+        "three_state_enable",
+        "three_state_enable_rise",
+        "three_state_enable_fall",
+        "rising_edge",
+        "falling_edge",
+        "preset",
+        "clear",
+        "hold_rising",
+        "hold_falling",
+        "setup_rising",
+        "setup_falling",
+        "recovery_rising",
+        "recovery_falling",
+        "skew_rising",
+        "skew_falling",
+        "removal_rising",
+        "removal_falling",
+        "min_pulse_width",
+        "minimum_period",
+        "max_clock_tree_path",
+        "min_clock_tree_path",
+        "non_seq_setup_rising",
+        "non_seq_setup_falling",
+        "non_seq_hold_rising",
+        "non_seq_hold_falling",
+        "nochange_high_high",
+        "nochange_high_low",
+        "nochange_low_high",
+        "nochange_low_low"
+    ],
+    "when": {
+        "type": "Boolean expression"
+    },
+    "when_end": {
+        "type": "Boolean expression"
+    },
+    "when_start": {
+        "type": "Boolean expression"
+    }
+}

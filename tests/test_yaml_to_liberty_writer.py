@@ -46,5 +46,13 @@ def test_get_lib_level_attributes_as_string(yaml_to_liberty_writer_simple_lib_le
   string_thing = yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string()
   print(f"String thing: {string_thing}")
   assert yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string() == gscl45nm_lib_level_string_without_complex_and_group
-  
-  
+
+def test_get_cell_simple_attributes_as_string(yaml_to_liberty_writer_gscl45nm):
+  first_cell = yaml_to_liberty_writer_gscl45nm.yaml_file.get("library").get("cells")[0]
+  print(f"First cell: {first_cell}")
+  assert yaml_to_liberty_writer_gscl45nm.get_cell_simple_attributes_as_string(first_cell) == "cell_footprint : \"buf\";\narea : 2.3465;\ncell_leakage_power : 19.7536;\n"
+
+def test_get_pin_simple_attributes_as_string(yaml_to_liberty_writer_gscl45nm):
+  first_pin = yaml_to_liberty_writer_gscl45nm.yaml_file.get("library").get("cells")[0].get("pins")[0]
+  print(f"First pin: {first_pin}")
+  assert yaml_to_liberty_writer_gscl45nm.get_pin_simple_attributes_as_string(first_pin) == "direction : input;\ncapacitance : 0.00153896;\nrise_capacitance : 0.00153896;\nfall_capacitance : 0.00150415;\n"
