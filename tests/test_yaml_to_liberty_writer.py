@@ -56,3 +56,7 @@ def test_get_pin_simple_attributes_as_string(yaml_to_liberty_writer_gscl45nm):
   first_pin = yaml_to_liberty_writer_gscl45nm.yaml_file.get("library").get("cells")[0].get("pins")[0]
   print(f"First pin: {first_pin}")
   assert yaml_to_liberty_writer_gscl45nm.get_pin_simple_attributes_as_string(first_pin) == "direction : input;\ncapacitance : 0.00153896;\nrise_capacitance : 0.00153896;\nfall_capacitance : 0.00150415;\n"
+
+def test_get_function_notation_string(yaml_to_liberty_writer_gscl45nm):
+  assert yaml_to_liberty_writer_gscl45nm.get_function_notation_string("cell_rise", "scalar", "values(\"0.0\");") == "cell_rise(scalar) {\n  values(\"0.0\");\n}\n"
+  

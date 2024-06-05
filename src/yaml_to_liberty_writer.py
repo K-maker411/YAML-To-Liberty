@@ -98,9 +98,30 @@ class YamlToLibertyWriter:
         full_string += self.get_string_from_attr_type(attr, pin_group_simple_attributes_dict, pin_dict)
 
     return full_string
-    
+
+  # e.g. cell_rise(scalar) {}
+  def get_function_notation_string(self, func_name, param_name, inside_string):
+    return func_name + "(" + param_name + ") {\n  " + inside_string + "\n}\n"
   
-  def get_full_library(self):
+  # TODO - this is a very barebones function (no support for LUT), need to update later
+  # works on individual timing, must do loop to go through all timing values
+  def get_timing_in_pin_as_string(self, timing_dict):
+    full_string = ""
+    timing_group_simple_attributes_dict = self.attributes_provider.get_timing_group_simple_attributes()
+    for attr in timing_dict:
+      if attr in timing_group_simple_attributes_dict:
+        full_string += self.get_string_from_attr_type(attr, timing_group_simple_attributes_dict, timing_dict)
+      
+    
+    return full_string
+  
+  def get_all_pins_in_cell_as_string(self, cell_dict):
+    pass
+
+  def get_all_cells_in_library_as_string(self):
+    pass
+  
+  def get_full_library_as_string(self):
     full_lib = ""
     full_lib += "library(" + self.yaml_file.get("library").get("name") + ") {"
     # add the rest of the stuff here (in a while, crocodile)

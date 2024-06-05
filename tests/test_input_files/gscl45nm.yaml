@@ -169,7 +169,7 @@ library:
           - [0.115169, 0.116317, 0.239017, 0.273588, 0.502134]
           - [0.28636, 0.28105, 0.33743, 0.369142, 0.563601]
       internal_powers:
-      - related_pin: "B"
+      - related_pin: "A"
         rise_power: 
           cell_template: "energy_template_6x6"
           index_1: [0.1, 0.5, 1.2, 3, 4, 5]
