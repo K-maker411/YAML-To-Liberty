@@ -9,6 +9,7 @@ LIBRARY_LEVEL_DEFAULT_ATTRIBUTES_PATH = Path(
 LIBRARY_LEVEL_SCALING_ATTRIBUTES_PATH = Path(
     "supported_attributes/library_level_scaling_attributes_to_types_mapping.json").absolute()
 gscl45nm = Path("tests/test_input_files/gscl45nm.yaml").absolute()
+simple_gscl45nm = Path("tests/test_input_files/simple_gscl45nm.yaml").absolute()
 CELL_GROUP_SIMPLE_ATTRIBUTES_PATH = Path("supported_attributes/cell_group_simple_attributes_to_types_mapping.json").absolute()
 PIN_GROUP_SIMPLE_ATTRIBUTES_PATH = Path("supported_attributes/pin_group_simple_attributes_to_types_mapping.json").absolute()
 TIMING_GROUP_SIMPLE_ATTRIBUTES_PATH = Path("supported_attributes/timing_group_simple_attributes_to_types_mapping.json").absolute()
@@ -19,6 +20,10 @@ def gscl45nm_yaml_file():
   with open(gscl45nm, 'r') as file:
     yield file
 
+@pytest.fixture
+def simple_gscl45nm_yaml_file():
+  with open(simple_gscl45nm, 'r') as file:
+    yield file
 
 @pytest.fixture
 def library_level_simple_attributes_file():

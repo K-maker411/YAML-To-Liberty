@@ -32,7 +32,7 @@ library:
   default_operating_conditions: "typical"
 
   cells:
-    - name: "BUFX2"
+  - name: "BUFX2"
     cell_footprint: "buf"
     area: 2.346500
     cell_leakage_power: 19.7536

@@ -1,4 +1,4 @@
-import constants_yaml_to_liberty_writer
+import src.constants_yaml_to_liberty_writer
 import yaml
 
 # MOST IMPORTANTLY - don't obssess about making the code perfect on the first try, let's just get it working first! I
@@ -107,16 +107,28 @@ class YamlToLibertyWriter:
 
     return full_string
 
+  def get_statement_with_parens_string(self, statement, params_string):
+    # convert params_string to str in case it's not already
+    return statement + "(" + str(params_string) + ");" 
+  
   # e.g. cell_rise(scalar) {}
   # TODO - fix spaces issue, need to adjust every line within inside_string before returning
   def get_function_notation_string(self, func_name, param_name, inside_string, num_spaces_for_indent):
+    # split by line
+    lines = inside_string.split("\n")
+    # get actual spaces based on given input
     spaces = " " * num_spaces_for_indent
-    return spaces + func_name + "(" + param_name + ") {\n  " + spaces + inside_string + "\n" + spaces + "}\n"
+    # for every line in lines, add spaces to the beginning of the line
+    # (also add two extra spaces to the beginning of the line to account for the indent required for the "function body")
+    lines = [spaces + "  " + line for line in lines]
+    # add spaces before func name, after the 
+    return spaces + func_name + "(" + param_name + ") {\n" + "\n".join(lines) + "\n" + spaces + "}\n"
 
   # TODO - must be modified later to add support for arrays/indices for cell rise/fall and rise/fall transition
+  # TODO - need to also add support for the rest of the group attributes within timing group in pin group
   def get_timing_group_group_attribute_as_string(self, attr, timing_dict):
-    if attr == constants_yaml_to_liberty_writer.CELL_RISE or attr == constants_yaml_to_liberty_writer.CELL_FALL or attr == constants_yaml_to_liberty_writer.RISE_TRANSITION or attr == constants_yaml_to_liberty_writer.FALL_TRANSITION:
-      return self.get_function_notation_string(attr, timing_dict.get(attr).get("cell_template"), str(timing_dict.get(attr).get("values")), constants_yaml_to_liberty_writer.INSIDE_TIMING_GROUP_NUM_SPACES)
+    if attr == src.constants_yaml_to_liberty_writer.CELL_RISE or attr == src.constants_yaml_to_liberty_writer.CELL_FALL or attr == src.constants_yaml_to_liberty_writer.RISE_TRANSITION or attr == src.constants_yaml_to_liberty_writer.FALL_TRANSITION:
+      return self.get_function_notation_string(attr, timing_dict.get(attr).get("cell_template"), self.get_statement_with_parens_string("values", timing_dict.get(attr).get("values")), src.constants_yaml_to_liberty_writer.INSIDE_TIMING_GROUP_NUM_SPACES)
     else:
       return ""
       
@@ -134,7 +146,7 @@ class YamlToLibertyWriter:
       elif attr in timing_group_group_attributes_dict:
         timing_string += self.get_timing_group_group_attribute_as_string(attr, timing_dict)
 
-    return self.get_function_notation_string("timing", "", timing_string, constants_yaml_to_liberty_writer.INSIDE_PIN_GROUP_NUM_SPACES)
+    return self.get_function_notation_string("timing", "", timing_string, src.constants_yaml_to_liberty_writer.INSIDE_PIN_GROUP_NUM_SPACES)
 
   
   def get_all_pins_in_cell_as_string(self, cell_dict):
