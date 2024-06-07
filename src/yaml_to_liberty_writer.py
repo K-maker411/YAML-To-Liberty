@@ -1,7 +1,15 @@
+import constants_yaml_to_liberty_writer
 import yaml
 
 # MOST IMPORTANTLY - don't obssess about making the code perfect on the first try, let's just get it working first! I
 # can always go back and change stuff later to make it prettier :)
+
+# hmmm I don't know what to do about structure, on one hand classes would get
+# super annoying, but on the other hand, all of these functions being in this class might get crowded
+
+# POTENTIAL SOLUTION: instead of class, what if each is a module and just provides related functionality? 
+# classes aren't very useful here since they will be singleton instances
+# (it also probably would not be very difficult to alter the code to work with modules instead)
 
 class YamlToLibertyWriter:
   def __init__(self, yaml_file_read_stream, attributes_provider):
@@ -100,20 +108,34 @@ class YamlToLibertyWriter:
     return full_string
 
   # e.g. cell_rise(scalar) {}
-  def get_function_notation_string(self, func_name, param_name, inside_string):
-    return func_name + "(" + param_name + ") {\n  " + inside_string + "\n}\n"
+  # TODO - fix spaces issue, need to adjust every line within inside_string before returning
+  def get_function_notation_string(self, func_name, param_name, inside_string, num_spaces_for_indent):
+    spaces = " " * num_spaces_for_indent
+    return spaces + func_name + "(" + param_name + ") {\n  " + spaces + inside_string + "\n" + spaces + "}\n"
+
+  # TODO - must be modified later to add support for arrays/indices for cell rise/fall and rise/fall transition
+  def get_timing_group_group_attribute_as_string(self, attr, timing_dict):
+    if attr == constants_yaml_to_liberty_writer.CELL_RISE or attr == constants_yaml_to_liberty_writer.CELL_FALL or attr == constants_yaml_to_liberty_writer.RISE_TRANSITION or attr == constants_yaml_to_liberty_writer.FALL_TRANSITION:
+      return self.get_function_notation_string(attr, timing_dict.get(attr).get("cell_template"), str(timing_dict.get(attr).get("values")), constants_yaml_to_liberty_writer.INSIDE_TIMING_GROUP_NUM_SPACES)
+    else:
+      return ""
+      
   
   # TODO - this is a very barebones function (no support for LUT), need to update later
   # works on individual timing, must do loop to go through all timing values
   def get_timing_in_pin_as_string(self, timing_dict):
-    full_string = ""
+    timing_string = ""
     timing_group_simple_attributes_dict = self.attributes_provider.get_timing_group_simple_attributes()
+    timing_group_group_attributes_dict = self.attributes_provider.get_timing_group_group_attributes()
     for attr in timing_dict:
       if attr in timing_group_simple_attributes_dict:
-        full_string += self.get_string_from_attr_type(attr, timing_group_simple_attributes_dict, timing_dict)
-      
-    
-    return full_string
+        timing_string += self.get_string_from_attr_type(attr, timing_group_simple_attributes_dict, timing_dict)
+      # if attr is a group attr in timing group
+      elif attr in timing_group_group_attributes_dict:
+        timing_string += self.get_timing_group_group_attribute_as_string(attr, timing_dict)
+
+    return self.get_function_notation_string("timing", "", timing_string, constants_yaml_to_liberty_writer.INSIDE_PIN_GROUP_NUM_SPACES)
+
   
   def get_all_pins_in_cell_as_string(self, cell_dict):
     pass

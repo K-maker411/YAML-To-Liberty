@@ -1,6 +1,3 @@
-from pathlib import Path
-import pytest
-from src.attributes_provider import AttributesProvider
 
 LIB_LEVEL_SIMPLE_ATTRIBUTES_LIST = {
   "bus_naming_style": {"type": ["string"]},
