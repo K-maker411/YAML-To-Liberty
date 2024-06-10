@@ -240,3 +240,46 @@ def test_get_cell_as_string(yaml_to_liberty_writer_simple_gscl45nm):
     print("String: \n" + first_cell_string)
     print("Func: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_cell_as_string(first_cell_dict))
     assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_cell_as_string(first_cell_dict)) == repr(first_cell_string)
+
+def test_get_all_cells_in_library_as_string(yaml_to_liberty_writer_simple_gscl45nm):
+    all_cells_string = """cell(BUFX2) {
+  cell_footprint : "buf";
+  area : "2.3465";
+  cell_leakage_power : "19.7536";
+  pin(A) {
+    direction : "input";
+    capacitance : "0.00153896";
+    rise_capacitance : "0.00153896";
+    fall_capacitance : "0.00150415";
+  }
+  pin(Y) {
+    direction : "output";
+    capacitance : "0";
+    rise_capacitance : "0";
+    fall_capacitance : "0";
+    max_capacitance : "0.518678";
+    function : "A";
+    timing() {
+      related_pin : "A";
+      timing_sense : "positive_unate";
+      cell_rise(scalar) {
+        values("0.0");
+      }
+      rise_transition(scalar) {
+        values("0.0");
+      }
+      cell_fall(scalar) {
+        values("0.0");
+      }
+      fall_transition(scalar) {
+        values("0.0");
+      }
+    }
+  }
+}
+cell(BUFX1) {
+  cell_footprint : "buf";
+}
+"""
+    assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_all_cells_in_library_as_string()) == repr(all_cells_string)
+    
