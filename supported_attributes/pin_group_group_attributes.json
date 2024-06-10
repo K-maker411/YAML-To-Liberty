@@ -1,0 +1,13 @@
+{
+  "electromigration": null,
+  "hyperbolic_noise_above_high": null,
+  "hyperbolic_noise_below_low": null,
+  "hyperbolic_noise_high": null,
+  "hyperbolic_noise_low": null,
+  "internal_power": null,
+  "max_trans": null,
+  "min_pulse_width": null,
+  "minimum_period": null,
+  "timing": null,
+  "tlatch": null
+}

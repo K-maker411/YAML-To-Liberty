@@ -14,6 +14,7 @@ CELL_GROUP_SIMPLE_ATTRIBUTES_PATH = Path("supported_attributes/cell_group_simple
 PIN_GROUP_SIMPLE_ATTRIBUTES_PATH = Path("supported_attributes/pin_group_simple_attributes_to_types_mapping.json").absolute()
 TIMING_GROUP_SIMPLE_ATTRIBUTES_PATH = Path("supported_attributes/timing_group_simple_attributes_to_types_mapping.json").absolute()
 TIMING_GROUP_GROUP_ATTRIBUTES_PATH = Path("supported_attributes/timing_group_group_attributes.json").absolute()
+PIN_GROUP_GROUP_ATTRIBUTES_PATH = Path("supported_attributes/pin_group_group_attributes.json").absolute()
 
 @pytest.fixture
 def gscl45nm_yaml_file():
@@ -63,11 +64,17 @@ def timing_group_group_attributes_file():
     yield file
 
 @pytest.fixture
-def attributes_provider(library_level_simple_attributes_file, library_level_default_attributes_file, library_level_scaling_attributes_file, cell_group_simple_attributes_file, pin_group_simple_attributes_file, timing_group_simple_attributes_file, timing_group_group_attributes_file):
+def pin_group_group_attributes_file():
+  with open(PIN_GROUP_GROUP_ATTRIBUTES_PATH, 'r') as file:
+    yield file
+
+@pytest.fixture
+def attributes_provider(library_level_simple_attributes_file, library_level_default_attributes_file, library_level_scaling_attributes_file, cell_group_simple_attributes_file, pin_group_simple_attributes_file, timing_group_simple_attributes_file, timing_group_group_attributes_file, pin_group_group_attributes_file):
   return AttributesProvider(library_level_simple_attributes_file,
                             library_level_default_attributes_file,
                             library_level_scaling_attributes_file, 
                             cell_group_simple_attributes_file,
                             pin_group_simple_attributes_file,
                             timing_group_simple_attributes_file,
-                            timing_group_group_attributes_file)
+                            timing_group_group_attributes_file,
+                            pin_group_group_attributes_file)
