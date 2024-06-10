@@ -4,6 +4,7 @@ RISE_TRANSITION = "rise_transition"
 FALL_TRANSITION = "fall_transition"
 VALUES_STRING = "values(\"{}\")"
 TIMING = "timings"
+PIN = "pins"
 
 INSIDE_LIBRARY_NUM_SPACES = 2
 INSIDE_CELL_GROUP_NUM_SPACES = 4

@@ -117,38 +117,38 @@ def test_get_pin_as_string(yaml_to_liberty_writer_simple_gscl45nm):
     pin_Y_dict = yaml_to_liberty_writer_simple_gscl45nm.yaml_file.get(
         "library").get("cells")[0].get("pins")[1]
 
-    pin_A_string = """    pin(A) {
-      direction : "input";
-      capacitance : "0.00153896";
-      rise_capacitance : "0.00153896";
-      fall_capacitance : "0.00150415";
-    }
+    pin_A_string = """pin(A) {
+  direction : "input";
+  capacitance : "0.00153896";
+  rise_capacitance : "0.00153896";
+  fall_capacitance : "0.00150415";
+}
 """
 
-    pin_Y_string = """    pin(Y) {
-      direction : "output";
-      capacitance : "0";
-      rise_capacitance : "0";
-      fall_capacitance : "0";
-      max_capacitance : "0.518678";
-      function : "A";
-      timing() {
-        related_pin : "A";
-        timing_sense : "positive_unate";
-        cell_rise(scalar) {
-          values("0.0");
-        }
-        rise_transition(scalar) {
-          values("0.0");
-        }
-        cell_fall(scalar) {
-          values("0.0");
-        }
-        fall_transition(scalar) {
-          values("0.0");
-        }
-      }
+    pin_Y_string = """pin(Y) {
+  direction : "output";
+  capacitance : "0";
+  rise_capacitance : "0";
+  fall_capacitance : "0";
+  max_capacitance : "0.518678";
+  function : "A";
+  timing() {
+    related_pin : "A";
+    timing_sense : "positive_unate";
+    cell_rise(scalar) {
+      values("0.0");
     }
+    rise_transition(scalar) {
+      values("0.0");
+    }
+    cell_fall(scalar) {
+      values("0.0");
+    }
+    fall_transition(scalar) {
+      values("0.0");
+    }
+  }
+}
 """
     print("String: \n" + pin_Y_string)
     print("Func: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_pin_as_string(pin_Y_dict))
@@ -163,39 +163,80 @@ def test_get_pin_as_string(yaml_to_liberty_writer_simple_gscl45nm):
 def test_get_all_pins_in_cell_as_string(yaml_to_liberty_writer_simple_gscl45nm):
     first_cell_dict = yaml_to_liberty_writer_simple_gscl45nm.yaml_file.get("library").get("cells")[0]
 
-    pins_in_first_cell_string = """    pin(A) {
-      direction : "input";
-      capacitance : "0.00153896";
-      rise_capacitance : "0.00153896";
-      fall_capacitance : "0.00150415";
+    pins_in_first_cell_string = """pin(A) {
+  direction : "input";
+  capacitance : "0.00153896";
+  rise_capacitance : "0.00153896";
+  fall_capacitance : "0.00150415";
+}
+pin(Y) {
+  direction : "output";
+  capacitance : "0";
+  rise_capacitance : "0";
+  fall_capacitance : "0";
+  max_capacitance : "0.518678";
+  function : "A";
+  timing() {
+    related_pin : "A";
+    timing_sense : "positive_unate";
+    cell_rise(scalar) {
+      values("0.0");
     }
-    pin(Y) {
-      direction : "output";
-      capacitance : "0";
-      rise_capacitance : "0";
-      fall_capacitance : "0";
-      max_capacitance : "0.518678";
-      function : "A";
-      timing() {
-        related_pin : "A";
-        timing_sense : "positive_unate";
-        cell_rise(scalar) {
-          values("0.0");
-        }
-        rise_transition(scalar) {
-          values("0.0");
-        }
-        cell_fall(scalar) {
-          values("0.0");
-        }
-        fall_transition(scalar) {
-          values("0.0");
-        }
-      }
+    rise_transition(scalar) {
+      values("0.0");
     }
+    cell_fall(scalar) {
+      values("0.0");
+    }
+    fall_transition(scalar) {
+      values("0.0");
+    }
+  }
+}
 """
 
     print("String: \n" + pins_in_first_cell_string)
     print("Func: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_all_pins_in_cell_as_string(first_cell_dict))
     assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_all_pins_in_cell_as_string(first_cell_dict)) == repr(pins_in_first_cell_string)
 
+def test_get_cell_as_string(yaml_to_liberty_writer_simple_gscl45nm):
+    first_cell_dict = yaml_to_liberty_writer_simple_gscl45nm.yaml_file.get("library").get("cells")[0]
+    first_cell_string = """cell(BUFX2) {
+  cell_footprint : "buf";
+  area : "2.3465";
+  cell_leakage_power : "19.7536";
+  pin(A) {
+    direction : "input";
+    capacitance : "0.00153896";
+    rise_capacitance : "0.00153896";
+    fall_capacitance : "0.00150415";
+  }
+  pin(Y) {
+    direction : "output";
+    capacitance : "0";
+    rise_capacitance : "0";
+    fall_capacitance : "0";
+    max_capacitance : "0.518678";
+    function : "A";
+    timing() {
+      related_pin : "A";
+      timing_sense : "positive_unate";
+      cell_rise(scalar) {
+        values("0.0");
+      }
+      rise_transition(scalar) {
+        values("0.0");
+      }
+      cell_fall(scalar) {
+        values("0.0");
+      }
+      fall_transition(scalar) {
+        values("0.0");
+      }
+    }
+  }
+}
+"""
+    print("String: \n" + first_cell_string)
+    print("Func: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_cell_as_string(first_cell_dict))
+    assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_cell_as_string(first_cell_dict)) == repr(first_cell_string)

@@ -203,20 +203,41 @@ class YamlToLibertyWriter:
 
     pin_func_notation = self.get_function_notation_string(
         "pin", pin_dict.get("name"), pin_string,
-        src.constants_yaml_to_liberty_writer.INSIDE_CELL_GROUP_NUM_SPACES)
+        0)
 
     return pin_func_notation
 
   def get_all_pins_in_cell_as_string(self, cell_dict):
     full_string = ""
     for pin_dict in cell_dict.get("pins"):
-      print("Pin dict: \n" + str(pin_dict))
       full_string += self.get_pin_as_string(pin_dict)
 
     return full_string
 
+  def get_cell_as_string(self, cell_dict):
+    cell_string = ""
+    cell_group_simple_attributes_dict = self.attributes_provider.get_cell_group_simple_attributes(
+    )
+    for attr in cell_dict:
+      if attr in cell_group_simple_attributes_dict:
+        cell_string += self.get_string_from_attr_type(
+            attr, cell_group_simple_attributes_dict, cell_dict)
+      # if attr is a group attr in cell group
+      elif attr == src.constants_yaml_to_liberty_writer.PIN:
+        cell_string += self.get_all_pins_in_cell_as_string(cell_dict)
+        
+
+    cell_string = self.remove_blank_lines(cell_string)
+
+    cell_func_notation = self.get_function_notation_string(
+        "cell", cell_dict.get("name"), cell_string,
+        0)
+
+    return cell_func_notation
+  
   def get_all_cells_in_library_as_string(self):
-    pass
+    full_string = ""
+    
 
   def get_full_library_as_string(self):
     full_lib = ""
