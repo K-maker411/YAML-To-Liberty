@@ -6,6 +6,10 @@ VALUES_STRING = "values(\"{}\")"
 TIMING = "timings"
 PIN = "pins"
 CELL = "cells"
+POWER_RAIL = "power_rail"
+NAME = "name"
+CAPACITIVE_LOAD_UNIT = "capacitive_load_unit"
+OPERATING_CONDITIONS = "operating_conditions"
 
 INSIDE_LIBRARY_NUM_SPACES = 2
 INSIDE_CELL_GROUP_NUM_SPACES = 4

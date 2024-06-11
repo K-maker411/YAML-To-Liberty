@@ -93,6 +93,10 @@ class YamlToLibertyWriter:
       elif attr in lib_level_scaling_attributes_dict:
         full_string += self.get_string_from_attr_type(
             attr, lib_level_scaling_attributes_dict, library_level_yaml)
+      elif attr == src.constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT:
+        full_string += self.get_capacitive_load_unit_as_string() + "\n"
+      elif attr == src.constants_yaml_to_liberty_writer.OPERATING_CONDITIONS:
+        full_string += self.get_operating_conditions_as_string(self.yaml_file.get("library").get("operating_conditions")) + "\n"
 
     return full_string
 
@@ -129,7 +133,7 @@ class YamlToLibertyWriter:
 
   def get_statement_with_parens_string(self, statement, params_string):
     # convert params_string to str in case it's not already
-    return statement + "(\"" + str(params_string) + "\");"
+    return statement + "(" + str(params_string) + ");"
 
   # e.g. cell_rise(scalar) {}
   # TODO - fix spaces issue, need to adjust every line within inside_string before returning
@@ -158,7 +162,7 @@ class YamlToLibertyWriter:
           timing_dict.get(attr).get("cell_template"),
           self.get_statement_with_parens_string(
               "values",
-              timing_dict.get(attr).get("values")),
+              "\"" + str(timing_dict.get(attr).get("values")) + "\""),
           0)
     else:
       return ""
@@ -243,6 +247,23 @@ class YamlToLibertyWriter:
     return full_string
     
 
+  def get_capacitive_load_unit_as_string(self):
+    inside_parens_string = "\"" + str(self.yaml_file.get("library").get("capacitive_load_unit").get("value")) + "\",\"" + self.yaml_file.get("library").get("capacitive_load_unit").get("unit") + "\""
+    return self.get_statement_with_parens_string("capacitive_load_unit", inside_parens_string) 
+
+  def get_operating_conditions_as_string(self, operating_conditions_dict):
+    inner_string = ""
+    for attr in operating_conditions_dict:
+      if attr == src.constants_yaml_to_liberty_writer.POWER_RAIL:
+        # TODO - add support for this attribute later (unnecessary for now)
+        continue
+      # otherwise, simple attribute, so just get as string like normal
+      elif attr != src.constants_yaml_to_liberty_writer.NAME:
+        inner_string += self.get_string_attr_as_string(attr, operating_conditions_dict)
+
+    
+    return self.remove_blank_lines( self.get_function_notation_string("operating_conditions", self.yaml_file.get("library").get("operating_conditions").get("name"), inner_string, 0))
+  
   def get_full_library_as_string(self):
     full_lib = ""
     full_lib += self.get_lib_level_attributes_as_string()

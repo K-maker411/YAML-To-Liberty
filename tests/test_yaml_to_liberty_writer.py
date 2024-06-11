@@ -29,6 +29,33 @@ nom_temperature : "27";
 default_operating_conditions : "typical";
 '''
 
+gscl45nm_lib_level_attrs_string_with_complex_and_group = '''delay_model : "table_lookup";
+in_place_swap_mode : "match_footprint";
+time_unit : "1ns";
+voltage_unit : "1V";
+current_unit : "1uA";
+pulling_resistance_unit : "1kohm";
+leakage_power_unit : "1nW";
+capacitive_load_unit("1","pf");
+slew_upper_threshold_pct_rise : "80";
+slew_lower_threshold_pct_rise : "20";
+slew_upper_threshold_pct_fall : "80";
+slew_lower_threshold_pct_fall : "20";
+input_threshold_pct_rise : "50";
+input_threshold_pct_fall : "50";
+output_threshold_pct_rise : "50";
+output_threshold_pct_fall : "50";
+nom_process : "1";
+nom_voltage : "1.1";
+nom_temperature : "27";
+operating_conditions(typical) {
+  process : "1";
+  voltage : "1.1";
+  temperature : "27";
+}
+default_operating_conditions : "typical";
+'''
+
 
 @pytest.fixture
 def yaml_with_simple_lib_level_attributes():
@@ -61,9 +88,10 @@ def test_get_lib_level_attributes_as_string(
     ) == "time_unit : \"1ns\";\nslew_upper_threshold_pct_rise : \"80\";\n"
     string_thing = yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string(
     )
+    print("Expected: " + gscl45nm_lib_level_attrs_string_with_complex_and_group)
     print(f"String thing: {string_thing}")
-    assert yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string(
-    ) == gscl45nm_lib_level_string_without_complex_and_group
+    assert repr(yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string(
+    )) == repr(gscl45nm_lib_level_attrs_string_with_complex_and_group)
 
 
 def test_get_cell_simple_attributes_as_string(yaml_to_liberty_writer_gscl45nm):
@@ -282,4 +310,19 @@ cell(BUFX1) {
 }
 """
     assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_all_cells_in_library_as_string()) == repr(all_cells_string)
-    
+
+def test_get_capacitive_load_unit_as_string(yaml_to_liberty_writer_simple_gscl45nm):
+    expected_str = """capacitive_load_unit("1","pf");"""
+    assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_capacitive_load_unit_as_string()) == repr(expected_str)
+
+def test_get_operating_conditions_as_string(yaml_to_liberty_writer_simple_gscl45nm):
+    operating_conditons_dict = yaml_to_liberty_writer_simple_gscl45nm.yaml_file.get("library").get("operating_conditions")
+    expected_str = """operating_conditions(typical) {
+  process : "1";
+  voltage : "1.1";
+  temperature : "27";
+}"""
+
+    print("expected: \n" + expected_str)
+    print("actual: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_operating_conditions_as_string(operating_conditons_dict))
+    assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_operating_conditions_as_string(operating_conditons_dict)) == repr(expected_str)
