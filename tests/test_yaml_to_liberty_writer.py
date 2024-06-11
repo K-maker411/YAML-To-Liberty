@@ -326,3 +326,76 @@ def test_get_operating_conditions_as_string(yaml_to_liberty_writer_simple_gscl45
     print("expected: \n" + expected_str)
     print("actual: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_operating_conditions_as_string(operating_conditons_dict))
     assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_operating_conditions_as_string(operating_conditons_dict)) == repr(expected_str)
+
+def test_get_full_library_as_string(yaml_to_liberty_writer_simple_gscl45nm):
+  expected_str = """library(gsc145nm) {
+  delay_model : "table_lookup";
+  in_place_swap_mode : "match_footprint";
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1uA";
+  pulling_resistance_unit : "1kohm";
+  leakage_power_unit : "1nW";
+  capacitive_load_unit("1","pf");
+  slew_upper_threshold_pct_rise : "80";
+  slew_lower_threshold_pct_rise : "20";
+  slew_upper_threshold_pct_fall : "80";
+  slew_lower_threshold_pct_fall : "20";
+  input_threshold_pct_rise : "50";
+  input_threshold_pct_fall : "50";
+  output_threshold_pct_rise : "50";
+  output_threshold_pct_fall : "50";
+  nom_process : "1";
+  nom_voltage : "1.1";
+  nom_temperature : "27";
+  operating_conditions(typical) {
+    process : "1";
+    voltage : "1.1";
+    temperature : "27";
+  }
+  default_operating_conditions : "typical";
+  cell(BUFX2) {
+    cell_footprint : "buf";
+    area : "2.3465";
+    cell_leakage_power : "19.7536";
+    pin(A) {
+      direction : "input";
+      capacitance : "0.00153896";
+      rise_capacitance : "0.00153896";
+      fall_capacitance : "0.00150415";
+    }
+    pin(Y) {
+      direction : "output";
+      capacitance : "0";
+      rise_capacitance : "0";
+      fall_capacitance : "0";
+      max_capacitance : "0.518678";
+      function : "A";
+      timing() {
+        related_pin : "A";
+        timing_sense : "positive_unate";
+        cell_rise(scalar) {
+          values("0.0");
+        }
+        rise_transition(scalar) {
+          values("0.0");
+        }
+        cell_fall(scalar) {
+          values("0.0");
+        }
+        fall_transition(scalar) {
+          values("0.0");
+        }
+      }
+    }
+  }
+  cell(BUFX1) {
+    cell_footprint : "buf";
+  }
+  
+}
+"""
+  print("Expected: \n" + expected_str)
+  print("\nActual: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_full_library_as_string())
+  
+  assert repr(expected_str) == repr(yaml_to_liberty_writer_simple_gscl45nm.get_full_library_as_string())

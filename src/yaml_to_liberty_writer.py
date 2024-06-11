@@ -267,16 +267,17 @@ class YamlToLibertyWriter:
   def get_full_library_as_string(self):
     full_lib = ""
     full_lib += self.get_lib_level_attributes_as_string()
-    # TODO - add some of the group/complex attributes here
-    
     full_lib += self.get_all_cells_in_library_as_string()
+    # TODO - add more groups here as necessary, doesn't matter for now
+    
+    return self.get_function_notation_string("library", self.yaml_file.get("library").get("name"), full_lib, 0)
     
     #for attr in self.yaml_file.get("library"):
       #if attr == src.constants_yaml_to_liberty_writer.CELL:
         #full_lib += self.get_all_cells_in_library_as_string()
 
 
-    return self.get_function_notation_string("library", self.yaml_file.get("library").get("name"), full_lib, 0)
+    
     full_lib += "library(" + self.yaml_file.get("library").get("name") + ") {"
     # add the rest of the stuff here (in a while, crocodile)
     full_lib += "\n"
