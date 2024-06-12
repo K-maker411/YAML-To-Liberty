@@ -1,4 +1,4 @@
-import src.constants_yaml_to_liberty_writer
+import constants_yaml_to_liberty_writer
 import yaml
 
 # MOST IMPORTANTLY - don't obssess about making the code perfect on the first try, let's just get it working first! I can always go back and change stuff later to make it prettier :)
@@ -93,9 +93,9 @@ class YamlToLibertyWriter:
       elif attr in lib_level_scaling_attributes_dict:
         full_string += self.get_string_from_attr_type(
             attr, lib_level_scaling_attributes_dict, library_level_yaml)
-      elif attr == src.constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT:
+      elif attr == constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT:
         full_string += self.get_capacitive_load_unit_as_string() + "\n"
-      elif attr == src.constants_yaml_to_liberty_writer.OPERATING_CONDITIONS:
+      elif attr == constants_yaml_to_liberty_writer.OPERATING_CONDITIONS:
         full_string += self.get_operating_conditions_as_string(self.yaml_file.get("library").get("operating_conditions")) + "\n"
 
     return full_string
@@ -151,7 +151,7 @@ class YamlToLibertyWriter:
         lines) + "\n" + spaces + "}\n"
 
   def is_delay_attr(self, attr):
-    return attr == src.constants_yaml_to_liberty_writer.CELL_RISE or attr == src.constants_yaml_to_liberty_writer.CELL_FALL or attr == src.constants_yaml_to_liberty_writer.RISE_TRANSITION or attr == src.constants_yaml_to_liberty_writer.FALL_TRANSITION
+    return attr == constants_yaml_to_liberty_writer.CELL_RISE or attr == constants_yaml_to_liberty_writer.CELL_FALL or attr == constants_yaml_to_liberty_writer.RISE_TRANSITION or attr == constants_yaml_to_liberty_writer.FALL_TRANSITION
 
   # TODO - must be modified later to add support for arrays/indices for cell rise/fall and rise/fall transition
   # TODO - need to also add support for the rest of the group attributes within timing group in pin group
@@ -198,7 +198,7 @@ class YamlToLibertyWriter:
         pin_string += self.get_string_from_attr_type(
             attr, pin_group_simple_attributes_dict, pin_dict)
       # if attr is a timing attr in pin group
-      elif attr == src.constants_yaml_to_liberty_writer.TIMING:  #and self.is_delay_attr(attr):
+      elif attr == constants_yaml_to_liberty_writer.TIMING:  #and self.is_delay_attr(attr):
         # add timing string to pin string
         for timing in pin_dict.get(attr):
           pin_string += self.get_timing_in_pin_as_string(timing)
@@ -227,7 +227,7 @@ class YamlToLibertyWriter:
         cell_string += self.get_string_from_attr_type(
             attr, cell_group_simple_attributes_dict, cell_dict)
       # if attr is a group attr in cell group
-      elif attr == src.constants_yaml_to_liberty_writer.PIN:
+      elif attr == constants_yaml_to_liberty_writer.PIN:
         cell_string += self.get_all_pins_in_cell_as_string(cell_dict)
         
 
@@ -254,11 +254,11 @@ class YamlToLibertyWriter:
   def get_operating_conditions_as_string(self, operating_conditions_dict):
     inner_string = ""
     for attr in operating_conditions_dict:
-      if attr == src.constants_yaml_to_liberty_writer.POWER_RAIL:
+      if attr == constants_yaml_to_liberty_writer.POWER_RAIL:
         # TODO - add support for this attribute later (unnecessary for now)
         continue
       # otherwise, simple attribute, so just get as string like normal
-      elif attr != src.constants_yaml_to_liberty_writer.NAME:
+      elif attr != constants_yaml_to_liberty_writer.NAME:
         inner_string += self.get_string_attr_as_string(attr, operating_conditions_dict)
 
     
@@ -273,7 +273,7 @@ class YamlToLibertyWriter:
     return self.get_function_notation_string("library", self.yaml_file.get("library").get("name"), full_lib, 0)
     
     #for attr in self.yaml_file.get("library"):
-      #if attr == src.constants_yaml_to_liberty_writer.CELL:
+      #if attr == constants_yaml_to_liberty_writer.CELL:
         #full_lib += self.get_all_cells_in_library_as_string()
 
 
