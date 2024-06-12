@@ -392,9 +392,7 @@ def test_get_full_library_as_string(yaml_to_liberty_writer_simple_gscl45nm):
   cell(BUFX1) {
     cell_footprint : "buf";
   }
-  
-}
-"""
+}"""
   print("Expected: \n" + expected_str)
   print("\nActual: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_full_library_as_string())
   

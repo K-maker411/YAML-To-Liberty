@@ -1,4 +1,4 @@
-import constants_yaml_to_liberty_writer
+from . import constants_yaml_to_liberty_writer
 import yaml
 
 # MOST IMPORTANTLY - don't obssess about making the code perfect on the first try, let's just get it working first! I can always go back and change stuff later to make it prettier :)
@@ -74,12 +74,9 @@ class YamlToLibertyWriter:
     # but it should work well for now
     full_string = ""
     library_level_yaml = self.yaml_file.get("library")
-    lib_level_simple_attributes_dict = self.attributes_provider.get_library_level_simple_attributes(
-    )
-    lib_level_default_attributes_dict = self.attributes_provider.get_library_level_default_attributes(
-    )
-    lib_level_scaling_attributes_dict = self.attributes_provider.get_library_level_scaling_attributes(
-    )
+    lib_level_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SIMPLE_ATTRIBUTES_STR)
+    lib_level_default_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.LIBRARY_LEVEL_DEFAULT_ATTRIBUTES_STR)
+    lib_level_scaling_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SCALING_ATTRIBUTES_STR)
     for attr in library_level_yaml:
       # if attr is a simple attr in lib level
       if attr in lib_level_simple_attributes_dict:
@@ -105,8 +102,7 @@ class YamlToLibertyWriter:
   # would be the input cell_dict
   def get_cell_simple_attributes_as_string(self, cell_dict):
     full_string = ""
-    cell_group_simple_attributes_dict = self.attributes_provider.get_cell_group_simple_attributes(
-    )
+    cell_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR)
     # go through all the attributes and process the simple ones
     for attr in cell_dict:
       print(f"current attr: {attr}")
@@ -122,8 +118,7 @@ class YamlToLibertyWriter:
   # would be the input pin_dict
   def get_pin_simple_attributes_as_string(self, pin_dict):
     full_string = ""
-    pin_group_simple_attributes_dict = self.attributes_provider.get_pin_group_simple_attributes(
-    )
+    pin_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR)
     for attr in pin_dict:
       if attr in pin_group_simple_attributes_dict:
         full_string += self.get_string_from_attr_type(
@@ -171,10 +166,8 @@ class YamlToLibertyWriter:
   # works on individual timing, must do loop to go through all timing values
   def get_timing_in_pin_as_string(self, timing_dict):
     timing_string = ""
-    timing_group_simple_attributes_dict = self.attributes_provider.get_timing_group_simple_attributes(
-    )
-    timing_group_group_attributes_dict = self.attributes_provider.get_timing_group_group_attributes(
-    )
+    timing_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.TIMING_GROUP_SIMPLE_ATTRIBUTES_STR)
+    timing_group_group_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.TIMING_GROUP_GROUP_ATTRIBUTES_STR)
     for attr in timing_dict:
       if attr in timing_group_simple_attributes_dict:
         timing_string += self.get_string_from_attr_type(
@@ -190,15 +183,13 @@ class YamlToLibertyWriter:
 
   def get_pin_as_string(self, pin_dict):
     pin_string = ""
-    pin_group_simple_attributes_dict = self.attributes_provider.get_pin_group_simple_attributes(
-    )
-    #pin_group_group_attributes_dict = self.attributes_provider.get_pin_group_group_attributes()
+    pin_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR)
     for attr in pin_dict:
       if attr in pin_group_simple_attributes_dict:
         pin_string += self.get_string_from_attr_type(
             attr, pin_group_simple_attributes_dict, pin_dict)
       # if attr is a timing attr in pin group
-      elif attr == constants_yaml_to_liberty_writer.TIMING:  #and self.is_delay_attr(attr):
+      elif attr == constants_yaml_to_liberty_writer.TIMING:
         # add timing string to pin string
         for timing in pin_dict.get(attr):
           pin_string += self.get_timing_in_pin_as_string(timing)
@@ -220,8 +211,7 @@ class YamlToLibertyWriter:
 
   def get_cell_as_string(self, cell_dict):
     cell_string = ""
-    cell_group_simple_attributes_dict = self.attributes_provider.get_cell_group_simple_attributes(
-    )
+    cell_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR)
     for attr in cell_dict:
       if attr in cell_group_simple_attributes_dict:
         cell_string += self.get_string_from_attr_type(
@@ -262,7 +252,7 @@ class YamlToLibertyWriter:
         inner_string += self.get_string_attr_as_string(attr, operating_conditions_dict)
 
     
-    return self.remove_blank_lines( self.get_function_notation_string("operating_conditions", self.yaml_file.get("library").get("operating_conditions").get("name"), inner_string, 0))
+    return self.remove_blank_lines(self.get_function_notation_string("operating_conditions", self.yaml_file.get("library").get("operating_conditions").get("name"), inner_string, 0))
   
   def get_full_library_as_string(self):
     full_lib = ""
@@ -270,7 +260,7 @@ class YamlToLibertyWriter:
     full_lib += self.get_all_cells_in_library_as_string()
     # TODO - add more groups here as necessary, doesn't matter for now
     
-    return self.get_function_notation_string("library", self.yaml_file.get("library").get("name"), full_lib, 0)
+    return self.remove_blank_lines(self.get_function_notation_string("library", self.yaml_file.get("library").get("name"), full_lib, 0))
     
     #for attr in self.yaml_file.get("library"):
       #if attr == constants_yaml_to_liberty_writer.CELL:

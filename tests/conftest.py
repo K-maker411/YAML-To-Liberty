@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
 from src.attributes_provider import AttributesProvider
+from src import constants_yaml_to_liberty_writer
 
 LIBRARY_LEVEL_SIMPLE_ATTRIBUTES_PATH = Path(
     "supported_attributes/library_level_simple_attributes_to_types_mapping.json").absolute()
@@ -70,11 +71,14 @@ def pin_group_group_attributes_file():
 
 @pytest.fixture
 def attributes_provider(library_level_simple_attributes_file, library_level_default_attributes_file, library_level_scaling_attributes_file, cell_group_simple_attributes_file, pin_group_simple_attributes_file, timing_group_simple_attributes_file, timing_group_group_attributes_file, pin_group_group_attributes_file):
-  return AttributesProvider(library_level_simple_attributes_file,
-                            library_level_default_attributes_file,
-                            library_level_scaling_attributes_file, 
-                            cell_group_simple_attributes_file,
-                            pin_group_simple_attributes_file,
-                            timing_group_simple_attributes_file,
-                            timing_group_group_attributes_file,
-                            pin_group_group_attributes_file)
+  attributes_dict = {
+    constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SIMPLE_ATTRIBUTES_STR: library_level_simple_attributes_file,       
+    constants_yaml_to_liberty_writer.LIBRARY_LEVEL_DEFAULT_ATTRIBUTES_STR: library_level_default_attributes_file,
+    constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SCALING_ATTRIBUTES_STR: library_level_scaling_attributes_file,
+    constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR: cell_group_simple_attributes_file,
+    constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR: pin_group_simple_attributes_file,
+    constants_yaml_to_liberty_writer.TIMING_GROUP_SIMPLE_ATTRIBUTES_STR: timing_group_simple_attributes_file,
+    constants_yaml_to_liberty_writer.TIMING_GROUP_GROUP_ATTRIBUTES_STR: timing_group_group_attributes_file,
+    constants_yaml_to_liberty_writer.PIN_GROUP_GROUP_ATTRIBUTES_STR: pin_group_group_attributes_file
+  }
+  return AttributesProvider(attributes_dict)
