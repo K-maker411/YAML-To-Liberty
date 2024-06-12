@@ -61,5 +61,4 @@ library(gsc145nm) {
   cell(BUFX1) {
     cell_footprint : "buf";
   }
-  
 }

@@ -1,4 +1,4 @@
-from . import constants_yaml_to_liberty_writer
+import constants_yaml_to_liberty_writer
 import yaml
 
 # MOST IMPORTANTLY - don't obssess about making the code perfect on the first try, let's just get it working first! I can always go back and change stuff later to make it prettier :)

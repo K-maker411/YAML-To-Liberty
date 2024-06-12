@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
-from .yaml_to_liberty_writer import YamlToLibertyWriter
-from .attributes_provider import AttributesProvider
-from . import constants_yaml_to_liberty_writer
+from yaml_to_liberty_writer import YamlToLibertyWriter
+from attributes_provider import AttributesProvider
+import constants_yaml_to_liberty_writer
 
 def main():  
   parser = argparse.ArgumentParser(
