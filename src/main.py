@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 from .yaml_to_liberty_writer import YamlToLibertyWriter
 from .attributes_provider import AttributesProvider
