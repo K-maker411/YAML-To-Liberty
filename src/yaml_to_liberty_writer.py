@@ -1,5 +1,7 @@
-import constants_yaml_to_liberty_writer
+from liberty.types import EscapedString
+from src import constants_yaml_to_liberty_writer
 import yaml
+from liberty.parser import parse_liberty
 
 # MOST IMPORTANTLY - don't obssess about making the code perfect on the first try, let's just get it working first! I can always go back and change stuff later to make it prettier :)
 
@@ -13,9 +15,12 @@ import yaml
 
 class YamlToLibertyWriter:
 
-  def __init__(self, yaml_file_read_stream, attributes_provider):
+  # NOTE - this assumes that if seed_lib_file is provided, then open(seed_lib_file_path) has already been done,
+  # and that the result of open(seed_lib_path) is being passed in 
+  def __init__(self, yaml_file_read_stream, attributes_provider, seed_lib_file=None):
     self.yaml_file = yaml.safe_load(yaml_file_read_stream)
     self.attributes_provider = attributes_provider
+    self.seed_lib_file = seed_lib_file
 
   def remove_blank_lines(self, s):
     return "\n".join(line for line in s.splitlines() if line.strip())
@@ -44,6 +49,23 @@ class YamlToLibertyWriter:
   def get_type_lib_level_as_string(self):
     pass
 
+
+  def get_lib_level_attributes_dict_from_seed_lib_file(self):
+    # if there is no seed lib file, exit function and don't do anything (might need to change this to return something other than empty dict, but we'll see)
+    if self.seed_lib_file is None:
+      return {}
+
+    # NOTE - this only works for simple, default, and scaling attributes right now - need to figure out how to handle seeding with complex and group attributes
+    seed_library = parse_liberty(self.seed_lib_file.read())
+    lib_level_attrs_dict = {}
+    # for every (non-complex, non-group) attribute in the seed library, add it to the lib_level_attrs_dict
+    for attr in seed_library.attributes:
+      # EscapedString is a type used by liberty parser for things like voltage_unit, etc.
+      if isinstance(attr.value, (str, float, int, EscapedString)):
+        lib_level_attrs_dict.update({attr.name: attr.value})
+    # TODO - add separate loop here for seed_library.groups (if that's even possible)
+    return lib_level_attrs_dict
+    
   def get_lib_level_attributes_as_string(self):
     # this could be improved a bit by not having to check directly for which "complexity level" an attribute belongs to,
     # but it should work well for now

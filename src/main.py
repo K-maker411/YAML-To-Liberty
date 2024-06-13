@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
 import argparse
-from yaml_to_liberty_writer import YamlToLibertyWriter
-from attributes_provider import AttributesProvider
-import constants_yaml_to_liberty_writer
+import pathlib
+from src.yaml_to_liberty_writer import YamlToLibertyWriter
+from src.attributes_provider import AttributesProvider
+from src import constants_yaml_to_liberty_writer
 
 def main():  
   parser = argparse.ArgumentParser(
-    prog='YAMLToLibertyWriter',
-    description='Converts YAML information into Liberty format using existing Liberty file attributes.')
-  parser.add_argument('input_file_path')
-  parser.add_argument("output_file_path")
+    prog="YAMLToLibertyWriter",
+    description="Converts YAML information into Liberty format using existing Liberty file attributes.")
+  parser.add_argument("input_file_path", type=pathlib.Path)
+  parser.add_argument("output_file_path", type=pathlib.Path)
+  parser.add_argument("-sl", "--seed_lib_attributes", type=pathlib.Path)
   args = parser.parse_args()
 
   try:
@@ -41,6 +43,7 @@ def main():
       y2l = YamlToLibertyWriter(input, attrs_provider)
       library_str = y2l.get_full_library_as_string()
       output.write(library_str)
+      print("Writing successful!")
   
   except IOError as e:
     print("IOError: " + str(e))
