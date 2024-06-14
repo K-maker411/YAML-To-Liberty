@@ -91,16 +91,48 @@ def yaml_to_liberty_writer_simple_gscl45nm_with_seed_lib(
 
 def test_get_lib_level_attributes_as_string(
     yaml_to_liberty_writer_simple_lib_level_attributes,
-    yaml_to_liberty_writer_gscl45nm):
+    yaml_to_liberty_writer_gscl45nm,
+    yaml_to_liberty_writer_simple_gscl45nm_with_seed_lib):
   assert yaml_to_liberty_writer_simple_lib_level_attributes.get_lib_level_attributes_as_string(
   ) == "time_unit : \"1ns\";\nslew_upper_threshold_pct_rise : \"80\";\n"
-  string_thing = yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string(
-  )
-  print("Expected: " + gscl45nm_lib_level_attrs_string_with_complex_and_group)
-  print(f"String thing: {string_thing}")
+  
   assert repr(
       yaml_to_liberty_writer_gscl45nm.get_lib_level_attributes_as_string(
       )) == repr(gscl45nm_lib_level_attrs_string_with_complex_and_group)
+
+  # tests both seeding and override behavior
+  # seeding tested through slew_thresholds not being in yaml and values from seed .lib being used
+  # override behavior tested through nom_temperature being in yaml and its value is used (28) rather than the value provided in the seed .lib (27)
+  expected_2 = """delay_model : "table_lookup";
+in_place_swap_mode : "match_footprint";
+time_unit : "1ns";
+voltage_unit : "1V";
+current_unit : "1uA";
+pulling_resistance_unit : "1kohm";
+leakage_power_unit : "1nW";
+capacitive_load_unit("1","pf");
+slew_upper_threshold_pct_rise : "80";
+slew_lower_threshold_pct_rise : "20";
+slew_upper_threshold_pct_fall : "80";
+slew_lower_threshold_pct_fall : "20";
+input_threshold_pct_rise : "50";
+input_threshold_pct_fall : "50";
+output_threshold_pct_rise : "50";
+output_threshold_pct_fall : "50";
+nom_process : "1";
+nom_voltage : "1.1";
+nom_temperature : "28";
+operating_conditions(typical) {
+  process : "1";
+  voltage : "1.1";
+  temperature : "27";
+}
+default_operating_conditions : typical;
+"""
+
+  print("expected_2: \n" + expected_2)
+  print("actual_2: \n" + yaml_to_liberty_writer_simple_gscl45nm_with_seed_lib.get_lib_level_attributes_as_string())
+  assert repr(expected_2) == repr(yaml_to_liberty_writer_simple_gscl45nm_with_seed_lib.get_lib_level_attributes_as_string())
 
 
 def test_get_cell_simple_attributes_as_string(yaml_to_liberty_writer_gscl45nm):

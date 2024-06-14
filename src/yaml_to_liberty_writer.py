@@ -16,8 +16,11 @@ from liberty.parser import parse_liberty
 class YamlToLibertyWriter:
 
   # NOTE - this assumes that if seed_lib_file is provided, then open(seed_lib_file_path) has already been done,
-  # and that the result of open(seed_lib_path) is being passed in 
-  def __init__(self, yaml_file_read_stream, attributes_provider, seed_lib_file=None):
+  # and that the result of open(seed_lib_path) is being passed in
+  def __init__(self,
+               yaml_file_read_stream,
+               attributes_provider,
+               seed_lib_file=None):
     self.yaml_file = yaml.safe_load(yaml_file_read_stream)
     self.attributes_provider = attributes_provider
     self.seed_lib_file = seed_lib_file
@@ -49,13 +52,13 @@ class YamlToLibertyWriter:
   def get_type_lib_level_as_string(self):
     pass
 
-
   def get_lib_level_attributes_dict_from_seed_lib_file(self):
     # if there is no seed lib file, exit function and don't do anything (might need to change this to return something other than empty dict, but we'll see)
     if self.seed_lib_file is None:
       return {}
 
     # NOTE - this only works for simple, default, and scaling attributes right now - need to figure out how to handle seeding with complex and group attributes
+    #print("seed_lib_file: \n" + self.seed_lib_file.read())
     seed_library = parse_liberty(self.seed_lib_file.read())
     lib_level_attrs_dict = {}
     # for every (non-complex, non-group) attribute in the seed library, add it to the lib_level_attrs_dict
@@ -64,33 +67,73 @@ class YamlToLibertyWriter:
       if isinstance(attr.value, (str, float, int, EscapedString)):
         lib_level_attrs_dict.update({attr.name: attr.value})
     # TODO - add separate loop here for seed_library.groups (if that's even possible)
+    # IDEA (to be implemented soon?): loop through all complex and group attributes in the seed library, but if they are complex/group, the dict entry will be {"name": null} - this way, we can check if the complex/group attribute has been defined in the YAML, and if not, we can use the value associated with this one as the default value for the complex/group attribute in the new .lib file (seeding complete)
+
+    # HOWEVER, how would I deal with this when there are multiple group attributes with the same name (namely power_lut_template)?
     return lib_level_attrs_dict
-    
+
+  def get_lib_level_attribute_as_string(self, attr, library_level_yaml,
+                                        lib_level_simple_attributes_dict,
+                                        lib_level_default_attributes_dict,
+                                        lib_level_scaling_attributes_dict):
+    # if attr is a simple attr in lib level
+    if attr in lib_level_simple_attributes_dict:
+      return self.get_string_from_attr_type(attr,
+                                            lib_level_simple_attributes_dict,
+                                            library_level_yaml)
+    # if attr is a default attr in lib level
+    elif attr in lib_level_default_attributes_dict:
+      return self.get_string_from_attr_type(attr,
+                                            lib_level_default_attributes_dict,
+                                            library_level_yaml)
+    # if attr is a scaling attr in lib level
+    elif attr in lib_level_scaling_attributes_dict:
+      return self.get_string_from_attr_type(attr,
+                                            lib_level_scaling_attributes_dict,
+                                            library_level_yaml)
+    # TODO - currently, when the .lib is used to seed one of these group/complex attributes,
+    # it doesn't actually use that value because the liberty-parser uses different formatting
+    # for the attributes than this program does - eventually, we need to convert each of the 
+    # group/complex attributes from the seed .lib in the liberty-parser-extracted format to the same format as I'm using for any of this to work
+    elif attr == constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT:
+      return self.get_capacitive_load_unit_as_string() + "\n"
+    elif attr == constants_yaml_to_liberty_writer.OPERATING_CONDITIONS:
+      return self.get_operating_conditions_as_string(
+          self.yaml_file.get("library").get("operating_conditions")) + "\n"
+    else:
+      return ""
+
   def get_lib_level_attributes_as_string(self):
     # this could be improved a bit by not having to check directly for which "complexity level" an attribute belongs to,
     # but it should work well for now
     full_string = ""
     library_level_yaml = self.yaml_file.get("library")
-    lib_level_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SIMPLE_ATTRIBUTES_STR)
-    lib_level_default_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.LIBRARY_LEVEL_DEFAULT_ATTRIBUTES_STR)
-    lib_level_scaling_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SCALING_ATTRIBUTES_STR)
+    lib_level_simple_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SIMPLE_ATTRIBUTES_STR)
+    lib_level_default_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.LIBRARY_LEVEL_DEFAULT_ATTRIBUTES_STR)
+    lib_level_scaling_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.LIBRARY_LEVEL_SCALING_ATTRIBUTES_STR)
+    # NEW - adding seed file support
+    # NOTE - recent python versions make dicts preserve insertion order by default, so we can loop as-is
+    seed_lib_file_dict = self.get_lib_level_attributes_dict_from_seed_lib_file(
+    )
+    
+    for attr in seed_lib_file_dict:
+      # if the attribute has NOT been defined in the yaml file, we use the value in the seed .lib file
+      # (seeding behavior)
+      if attr not in library_level_yaml:
+        full_string += self.get_lib_level_attribute_as_string(
+            attr, seed_lib_file_dict, lib_level_simple_attributes_dict,
+            lib_level_default_attributes_dict,
+            lib_level_scaling_attributes_dict)
+
+      # otherwise, the attribute HAS been defined in the yaml file, so we use the value in the yaml file instead (override behavior)
+
     for attr in library_level_yaml:
-      # if attr is a simple attr in lib level
-      if attr in lib_level_simple_attributes_dict:
-        full_string += self.get_string_from_attr_type(
-            attr, lib_level_simple_attributes_dict, library_level_yaml)
-      # if attr is a default attr in lib level
-      elif attr in lib_level_default_attributes_dict:
-        full_string += self.get_string_from_attr_type(
-            attr, lib_level_default_attributes_dict, library_level_yaml)
-      # if attr is a scaling attr in lib level
-      elif attr in lib_level_scaling_attributes_dict:
-        full_string += self.get_string_from_attr_type(
-            attr, lib_level_scaling_attributes_dict, library_level_yaml)
-      elif attr == constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT:
-        full_string += self.get_capacitive_load_unit_as_string() + "\n"
-      elif attr == constants_yaml_to_liberty_writer.OPERATING_CONDITIONS:
-        full_string += self.get_operating_conditions_as_string(self.yaml_file.get("library").get("operating_conditions")) + "\n"
+      full_string += self.get_lib_level_attribute_as_string(
+          attr, library_level_yaml, lib_level_simple_attributes_dict,
+          lib_level_default_attributes_dict, lib_level_scaling_attributes_dict)
 
     return full_string
 
@@ -99,7 +142,8 @@ class YamlToLibertyWriter:
   # would be the input cell_dict
   def get_cell_simple_attributes_as_string(self, cell_dict):
     full_string = ""
-    cell_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR)
+    cell_group_simple_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR)
     # go through all the attributes and process the simple ones
     for attr in cell_dict:
       print(f"current attr: {attr}")
@@ -115,7 +159,8 @@ class YamlToLibertyWriter:
   # would be the input pin_dict
   def get_pin_simple_attributes_as_string(self, pin_dict):
     full_string = ""
-    pin_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR)
+    pin_group_simple_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR)
     for attr in pin_dict:
       if attr in pin_group_simple_attributes_dict:
         full_string += self.get_string_from_attr_type(
@@ -154,8 +199,7 @@ class YamlToLibertyWriter:
           timing_dict.get(attr).get("cell_template"),
           self.get_statement_with_parens_string(
               "values",
-              "\"" + str(timing_dict.get(attr).get("values")) + "\""),
-          0)
+              "\"" + str(timing_dict.get(attr).get("values")) + "\""), 0)
     else:
       return ""
 
@@ -163,8 +207,10 @@ class YamlToLibertyWriter:
   # works on individual timing, must do loop to go through all timing values
   def get_timing_in_pin_as_string(self, timing_dict):
     timing_string = ""
-    timing_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.TIMING_GROUP_SIMPLE_ATTRIBUTES_STR)
-    timing_group_group_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.TIMING_GROUP_GROUP_ATTRIBUTES_STR)
+    timing_group_simple_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.TIMING_GROUP_SIMPLE_ATTRIBUTES_STR)
+    timing_group_group_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.TIMING_GROUP_GROUP_ATTRIBUTES_STR)
     for attr in timing_dict:
       if attr in timing_group_simple_attributes_dict:
         timing_string += self.get_string_from_attr_type(
@@ -174,13 +220,12 @@ class YamlToLibertyWriter:
         timing_string += self.get_timing_group_group_attribute_as_string(
             attr, timing_dict)
 
-    return self.get_function_notation_string(
-        "timing", "", timing_string,
-        0)
+    return self.get_function_notation_string("timing", "", timing_string, 0)
 
   def get_pin_as_string(self, pin_dict):
     pin_string = ""
-    pin_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR)
+    pin_group_simple_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.PIN_GROUP_SIMPLE_ATTRIBUTES_STR)
     for attr in pin_dict:
       if attr in pin_group_simple_attributes_dict:
         pin_string += self.get_string_from_attr_type(
@@ -194,8 +239,7 @@ class YamlToLibertyWriter:
     pin_string = self.remove_blank_lines(pin_string)
 
     pin_func_notation = self.get_function_notation_string(
-        "pin", pin_dict.get("name"), pin_string,
-        0)
+        "pin", pin_dict.get("name"), pin_string, 0)
 
     return pin_func_notation
 
@@ -208,7 +252,8 @@ class YamlToLibertyWriter:
 
   def get_cell_as_string(self, cell_dict):
     cell_string = ""
-    cell_group_simple_attributes_dict = self.attributes_provider.get_attributes(constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR)
+    cell_group_simple_attributes_dict = self.attributes_provider.get_attributes(
+        constants_yaml_to_liberty_writer.CELL_GROUP_SIMPLE_ATTRIBUTES_STR)
     for attr in cell_dict:
       if attr in cell_group_simple_attributes_dict:
         cell_string += self.get_string_from_attr_type(
@@ -216,27 +261,28 @@ class YamlToLibertyWriter:
       # if attr is a group attr in cell group
       elif attr == constants_yaml_to_liberty_writer.PIN:
         cell_string += self.get_all_pins_in_cell_as_string(cell_dict)
-        
 
     cell_string = self.remove_blank_lines(cell_string)
 
     cell_func_notation = self.get_function_notation_string(
-        "cell", cell_dict.get("name"), cell_string,
-        0)
+        "cell", cell_dict.get("name"), cell_string, 0)
 
     return cell_func_notation
-  
+
   def get_all_cells_in_library_as_string(self):
     full_string = ""
     for cell_dict in self.yaml_file.get("library").get("cells"):
       full_string += self.get_cell_as_string(cell_dict)
 
     return full_string
-    
 
   def get_capacitive_load_unit_as_string(self):
-    inside_parens_string = "\"" + str(self.yaml_file.get("library").get("capacitive_load_unit").get("value")) + "\",\"" + self.yaml_file.get("library").get("capacitive_load_unit").get("unit") + "\""
-    return self.get_statement_with_parens_string("capacitive_load_unit", inside_parens_string) 
+    inside_parens_string = "\"" + str(
+        self.yaml_file.get("library").get("capacitive_load_unit").get(
+            "value")) + "\",\"" + self.yaml_file.get("library").get(
+                "capacitive_load_unit").get("unit") + "\""
+    return self.get_statement_with_parens_string("capacitive_load_unit",
+                                                 inside_parens_string)
 
   def get_operating_conditions_as_string(self, operating_conditions_dict):
     inner_string = ""
@@ -246,15 +292,22 @@ class YamlToLibertyWriter:
         continue
       # otherwise, simple attribute, so just get as string like normal
       elif attr != constants_yaml_to_liberty_writer.NAME:
-        inner_string += self.get_string_attr_as_string(attr, operating_conditions_dict)
+        inner_string += self.get_string_attr_as_string(
+            attr, operating_conditions_dict)
 
-    
-    return self.remove_blank_lines(self.get_function_notation_string("operating_conditions", self.yaml_file.get("library").get("operating_conditions").get("name"), inner_string, 0))
-  
+    return self.remove_blank_lines(
+        self.get_function_notation_string(
+            "operating_conditions",
+            self.yaml_file.get("library").get("operating_conditions").get(
+                "name"), inner_string, 0))
+
   def get_full_library_as_string(self):
     full_lib = ""
     full_lib += self.get_lib_level_attributes_as_string()
     full_lib += self.get_all_cells_in_library_as_string()
     # TODO - add more groups here as necessary, doesn't matter for now
-    
-    return self.remove_blank_lines(self.get_function_notation_string("library", self.yaml_file.get("library").get("name"), full_lib, 0))
+
+    return self.remove_blank_lines(
+        self.get_function_notation_string(
+            "library",
+            self.yaml_file.get("library").get("name"), full_lib, 0))

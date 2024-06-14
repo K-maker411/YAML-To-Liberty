@@ -14,7 +14,7 @@ library:
   output_threshold_pct_fall: 50
   nom_process: 1
   nom_voltage: 1.1
-  nom_temperature: 27
+  nom_temperature: 28
   operating_conditions:
     name: "typical"
     process: 1
