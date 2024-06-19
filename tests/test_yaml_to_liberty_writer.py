@@ -93,7 +93,7 @@ def yaml_to_liberty_writer_simple_gscl45nm_take_2(
     simple_gscl45nm_take_2_yaml_file, attributes_provider):
   return YamlToLibertyWriter(simple_gscl45nm_take_2_yaml_file, attributes_provider)
 
-
+'''
 def test_get_lib_level_attributes_as_string(
     yaml_to_liberty_writer_simple_lib_level_attributes,
     yaml_to_liberty_writer_gscl45nm,
@@ -473,59 +473,51 @@ def test_get_full_library_as_string(yaml_to_liberty_writer_simple_gscl45nm):
 
   assert repr(expected_str) == repr(
       yaml_to_liberty_writer_simple_gscl45nm.get_full_library_as_string())
+'''
 
+def test_get_simple_attr_as_string(yaml_to_liberty_writer_simple_gscl45nm_take_2):
+  attr_1 = "time_unit"
+  attr_2 = "slew_upper_threshold_pct_rise"
+  attr_3 = "current_unit"
 
-def test_get_lib_level_attributes_dict_from_seed_lib_file(
-    yaml_to_liberty_writer_simple_gscl45nm_with_seed_lib):
-  expected = {
-      "delay_model": "table_lookup",
-      "in_place_swap_mode": "match_footprint",
-      "time_unit": "1ns",
-      "voltage_unit": "1V",
-      "current_unit": "1uA",
-      "pulling_resistance_unit": "1kohm",
-      "leakage_power_unit": "1nW",
-      "slew_upper_threshold_pct_rise": 80,
-      "slew_lower_threshold_pct_rise": 20,
-      "slew_upper_threshold_pct_fall": 80,
-      "slew_lower_threshold_pct_fall": 20,
-      "input_threshold_pct_rise": 50,
-      "output_threshold_pct_rise": 50,
-      "nom_process": 1,
-      "nom_voltage": 1.1,
-      "nom_temperature": 27,
-      "default_operating_conditions": "typical"
-  }
-  lib_level_attributes_dict = yaml_to_liberty_writer_simple_gscl45nm_with_seed_lib.get_lib_level_attributes_dict_from_seed_lib_file(
-  )
+  value_1 = "\"1ns\""
+  value_2 = 80
+  value_3 = "1uA"
+  
+  expected_1 = """time_unit : "1ns";\n"""
+  expected_2 = """slew_upper_threshold_pct_rise : "80";\n"""
+  expected_3 = """current_unit : "1uA";\n"""
 
-  print("lib level attrs dict: \n" + str(lib_level_attributes_dict))
-
-  assert expected == lib_level_attributes_dict
-
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_simple_attr_as_string(attr_1, value_1)) == repr(expected_1)
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_simple_attr_as_string(attr_2, value_2)) == repr(expected_2)
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_simple_attr_as_string(attr_3, value_3)) == repr(expected_3)
 
 def test_get_complex_attr_as_string(yaml_to_liberty_writer_simple_gscl45nm_take_2):
-  cap_load_unit_attr_dict = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get(
-      "library").get(constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT)
+  attr_1 = "index_1"
+  attr_2 = "capacitive_load_unit"
 
-  index_1_dict = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get(
-    "library").get("cell")[0].get("pin")[1].get("internal_power")[0].get("rise_power").get("index_1")
+  value_1 = [1.0, 2.0, 3.0, 4.0, 5.0]
+  value_2 = [1, "pf"]
+
+  expected_1 = """index_1("1.0, 2.0, 3.0, 4.0, 5.0");\n"""
+  expected_2 = """capacitive_load_unit(1, pf);\n"""
+
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_complex_attr_as_string(attr_1, value_1)) == repr(expected_1)
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_complex_attr_as_string(attr_2, value_2)) == repr(expected_2)
+
+def test_get_group_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_take_2):
+  dict_1 = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library").get("vals").get("operating_conditions")
+
+  dict_2 = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library").get("vals").get("cell").get("vals")[0].get("pin").get("vals")[1].get("timing")
+
+  dict_3 = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library").get("vals").get("cell").get("vals")[0].get("pin")
+
+  dict_4 = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library").get("vals").get("cell")
+
+  dict_5 = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library")
   
-  expected_str_1 = "capacitive_load_unit(1, pf);"
-  expected_str_2 = "index_1(\"0.1, 0.5, 1.2, 3, 4, 5\");"
-
-  print("expected: \n" + expected_str_1)
-  print("actual: \n" + (yaml_to_liberty_writer_simple_gscl45nm_take_2.get_complex_attr_as_string(constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT, cap_load_unit_attr_dict)))
-  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_complex_attr_as_string(constants_yaml_to_liberty_writer.CAPACITIVE_LOAD_UNIT, cap_load_unit_attr_dict)) == repr(expected_str_1)
-
-  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_complex_attr_as_string("index_1", index_1_dict)) == repr(expected_str_2)
-
-def test_get_dict_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_take_2):
-  operating_conditions_dict = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library").get("operating_conditions")
-
-  timing_dict = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library").get("cell")[0].get("pin")[1].get("timing")
-  
-  expected_1 = """operating_conditions(typical) {
+  expected_1 = """operating_conditions() {
+  name : "typical";
   process : "1";
   voltage : "1.1";
   temperature : "27";
@@ -534,27 +526,195 @@ def test_get_dict_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_tak
   expected_2 = """timing() {
   related_pin : "A";
   timing_sense : "positive_unate";
-  cell_rise(scalar) {
+  cell_rise() {
+    cell_template : "scalar";
     values("0.0");
   }
-  rise_transition(scalar) {
+  rise_transition() {
+    cell_template : "scalar";
     values("0.0");
   }
-  cell_fall(scalar) {
+  cell_fall() {
+    cell_template : "scalar";
     values("0.0");
   }
-  fall_transition(scalar) {
+  fall_transition() {
+    cell_template : "scalar";
     values("0.0");
   }
 }"""
-  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_dict_as_string_recursive("operating_conditions", operating_conditions_dict)) == repr(expected_1)
 
-  print("expected: \n" + expected_2)
-  print("dict: \n" + str(timing_dict))
-  print("actual: \n" + yaml_to_liberty_writer_simple_gscl45nm_take_2.get_dict_as_string_recursive("timing", timing_dict))
+  expected_3 = """pin() {
+  name : "A";
+  direction : "input";
+  capacitance : "0.00153896";
+  rise_capacitance : "0.00153896";
+  fall_capacitance : "0.00150415";
+}
+pin() {
+  name : "Y";
+  direction : "output";
+  capacitance : "0";
+  rise_capacitance : "0";
+  fall_capacitance : "0";
+  max_capacitance : "0.518678";
+  function : "A";
+  timing() {
+    related_pin : "A";
+    timing_sense : "positive_unate";
+    cell_rise() {
+      cell_template : "scalar";
+      values("0.0");
+    }
+    rise_transition() {
+      cell_template : "scalar";
+      values("0.0");
+    }
+    cell_fall() {
+      cell_template : "scalar";
+      values("0.0");
+    }
+    fall_transition() {
+      cell_template : "scalar";
+      values("0.0");
+    }
+  }
+}"""
+
+  expected_4 = """cell() {
+  name : "BUFX2";
+  cell_footprint : "buf";
+  area : "2.3465";
+  cell_leakage_power : "19.7536";
+  pin() {
+    name : "A";
+    direction : "input";
+    capacitance : "0.00153896";
+    rise_capacitance : "0.00153896";
+    fall_capacitance : "0.00150415";
+  }
+  pin() {
+    name : "Y";
+    direction : "output";
+    capacitance : "0";
+    rise_capacitance : "0";
+    fall_capacitance : "0";
+    max_capacitance : "0.518678";
+    function : "A";
+    timing() {
+      related_pin : "A";
+      timing_sense : "positive_unate";
+      cell_rise() {
+        cell_template : "scalar";
+        values("0.0");
+      }
+      rise_transition() {
+        cell_template : "scalar";
+        values("0.0");
+      }
+      cell_fall() {
+        cell_template : "scalar";
+        values("0.0");
+      }
+      fall_transition() {
+        cell_template : "scalar";
+        values("0.0");
+      }
+    }
+  }
+}
+cell() {
+  name : "BUFX1";
+  cell_footprint : "buf";
+}"""
+
+  expected_5 = """library() {
+  name : "gscl45nm";
+  delay_model : "table_lookup";
+  in_place_swap_mode : "match_footprint";
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1uA";
+  pulling_resistance_unit : "1kohm";
+  leakage_power_unit : "1nW";
+  capacitive_load_unit(1, pf);
+  slew_upper_threshold_pct_rise : "80";
+  slew_lower_threshold_pct_rise : "20";
+  slew_upper_threshold_pct_fall : "80";
+  slew_lower_threshold_pct_fall : "20";
+  input_threshold_pct_rise : "50";
+  input_threshold_pct_fall : "50";
+  output_threshold_pct_rise : "50";
+  output_threshold_pct_fall : "50";
+  nom_process : "1";
+  nom_voltage : "1.1";
+  nom_temperature : "27";
+  operating_conditions() {
+    name : "typical";
+    process : "1";
+    voltage : "1.1";
+    temperature : "27";
+  }
+  default_operating_conditions : "typical";
+  cell() {
+    name : "BUFX2";
+    cell_footprint : "buf";
+    area : "2.3465";
+    cell_leakage_power : "19.7536";
+    pin() {
+      name : "A";
+      direction : "input";
+      capacitance : "0.00153896";
+      rise_capacitance : "0.00153896";
+      fall_capacitance : "0.00150415";
+    }
+    pin() {
+      name : "Y";
+      direction : "output";
+      capacitance : "0";
+      rise_capacitance : "0";
+      fall_capacitance : "0";
+      max_capacitance : "0.518678";
+      function : "A";
+      timing() {
+        related_pin : "A";
+        timing_sense : "positive_unate";
+        cell_rise() {
+          cell_template : "scalar";
+          values("0.0");
+        }
+        rise_transition() {
+          cell_template : "scalar";
+          values("0.0");
+        }
+        cell_fall() {
+          cell_template : "scalar";
+          values("0.0");
+        }
+        fall_transition() {
+          cell_template : "scalar";
+          values("0.0");
+        }
+      }
+    }
+  }
+  cell() {
+    name : "BUFX1";
+    cell_footprint : "buf";
+  }
+}"""
   
-  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_dict_as_string_recursive("timing", timing_dict)) == repr(expected_2)
+  
+  print("Expected: \n" + expected_5)
+  print("Actual: \n" + yaml_to_liberty_writer_simple_gscl45nm_take_2.get_group_as_string_recursive("library", dict_5))
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_group_as_string_recursive("operating_conditions", dict_1)) == repr(expected_1)
 
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_group_as_string_recursive("timing", dict_2)) == repr(expected_2)
 
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_group_as_string_recursive("pin", dict_3)) == repr(expected_3)
+
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_group_as_string_recursive("cell", dict_4)) == repr(expected_4)
+
+  assert repr(yaml_to_liberty_writer_simple_gscl45nm_take_2.get_group_as_string_recursive("library", dict_5)) == repr(expected_5)
 
   

@@ -94,6 +94,8 @@ class YamlToLibertyWriter:
 
 
   def get_simple_attr_as_string(self, attr, value):
+    # convert value to string if it isn't already
+    value = str(value)
     # if the value already has quotes around it (e.g. from the liberty parser), don't add extra
     if (value[0] == "\"" and value[-1] == "\""):
       return attr + " : " + value + ";\n"
@@ -101,7 +103,7 @@ class YamlToLibertyWriter:
     # otherwise, return string with double quotes around the value
     return attr + " : \"" + value + "\";\n"
       
-  
+  # here, value is a list
   def get_complex_attr_as_string(self, attr, value):
     full_string = attr + "("
 
@@ -128,10 +130,10 @@ class YamlToLibertyWriter:
   def handle_simple_attribute(self, attr_name, attr_value, accum_str, num_indents):
     indents = " " * num_indents
     # this assumes that \n was already done on accum_str
-    new_string = accum_str + indents + self.get_string_attr_as_string(attr_name, attr_value)
+    new_string = accum_str + indents + self.get_simple_attr_as_string(attr_name, attr_value)
     return new_string
 
-  # converts complex attribute to 
+  # converts complex attribute to lib format
   def handle_complex_attribute(self, attr_name, attr_value, accum_str, num_indents):
     indents = " " * num_indents
     # attr_value is list of values
@@ -144,8 +146,11 @@ class YamlToLibertyWriter:
       item = list_[index]
       # if the item in the list is a dict
       if isinstance(item, dict):
-        
-        accum_str += self.handle_dict(item, accum_str, num_indents)
+        # lists themselves don't exist in .lib the way they do in the YAML specification,
+        # so we need to plug in the given attr_name into the handle_dict method because
+        # we are on a list of dicts (e.g. cell in YAML has a list of cells, and when we get the first one in this function,
+        # we are on a cell dict, thus we plug in attr_name, which was cell)
+        accum_str = self.handle_dict(attr_name, item, accum_str, num_indents)
       # when would this even happen (can it happen)?
       elif isinstance(item, list):
         pass
@@ -159,46 +164,68 @@ class YamlToLibertyWriter:
 
   def handle_dict(self, attr_name, dict_, accum_str, num_indents):
     indents = " " * num_indents
+    # add to accum_str
+    # TODO - figure out how to put the stuff in parentheses later
+    # TODO - check if this is necessary
+    #print("adding to accum_str: " + indents + attr_name + "() {\n")
+    accum_str += indents + attr_name + "() {\n"
     # key is attribute name, value is attribute value
     for key, value in dict_.items():
+      #print("key: " + key)
+      #print("value: " + str(value))
+      #print("is value a dict: " + str(isinstance(value, dict)))
       if isinstance(value, dict):
-        if constants_yaml_to_liberty_writer.LEVEL_TYPE_STR in dict_ and constants_yaml_to_liberty_writer.VALS_STR in dict_:
-            # check if this is a group attribute
+        
+        if constants_yaml_to_liberty_writer.LEVEL_TYPE_STR in value and constants_yaml_to_liberty_writer.VALS_STR in value:
+          # check if this is a group attribute
+          #print("is value a group attribute: " + str(value.get(constants_yaml_to_liberty_writer.LEVEL_TYPE_STR) == constants_yaml_to_liberty_writer.GROUP_STR))
           if value.get(constants_yaml_to_liberty_writer.LEVEL_TYPE_STR) == constants_yaml_to_liberty_writer.GROUP_STR:
             # add to accum_str
             # TODO - figure out how to put the stuff in parentheses later
-            accum_str += indents + attr_name + "() {\n"
-            # if so, recursively call this function on the group attribute
-            accum_str += self.handle_dict(key, value.get(constants_yaml_to_liberty_writer.VALS_STR), accum_str, num_indents + 2)
+            # TODO - is this even correct? all guesswork for now, we shall see
+            #print("adding to accum_str (inside if isinstnace value dict in handle dict): " + indents + attr_name + "() {\n")
+            #accum_str += indents + "  " + attr_name + "() {\n"
+            vals = value.get(constants_yaml_to_liberty_writer.VALS_STR)
+            # if vals is a list, call handle_list
+            if isinstance(vals, list):
+              # TODO - check if num_indents + 2 is necessary
+              accum_str = self.handle_list(key, vals, accum_str, num_indents + 2)
+            else:
+              # if so, recursively call this function on the group attribute (using the vals of this group as the dict_)
+              #print("recursively calling handle dict, key: " + key + ", value: " + str(value))
+              accum_str = self.handle_dict(key, vals, accum_str, num_indents + 2)
             
           # otherwise, check if this is a complex attribute
           elif value.get(constants_yaml_to_liberty_writer.LEVEL_TYPE_STR) == constants_yaml_to_liberty_writer.COMPLEX_STR:
-            accum_str += self.handle_complex_attribute(key, value, accum_str, num_indents + 2)
+            vals = value.get(constants_yaml_to_liberty_writer.VALS_STR)
+            accum_str = self.handle_complex_attribute(key, vals, accum_str, num_indents + 2)
         
       elif isinstance(value, list):
+        # i don't think this is possible, since it would just be a complex attribute, but the YAML for that has already changed
+        #print("ERROR: this is not possible - value in handle_dict is a list")
         pass
       # must be simple attribute
       else:
-        accum_str += self.handle_simple_attribute(key, value, accum_str, num_indents + 2)
+        #print("handling simple attribute: " + key)
+        accum_str = self.handle_simple_attribute(key, value, accum_str, num_indents + 2)
         
     return accum_str + indents + "}\n"
 
 
   
-  def get_group_as_string_recursive(self, dict_):
+  def get_group_as_string_recursive(self, attr_name, dict_):
     accum_str = ""
     final_string = ""
-    # gets first key's name - theoretically, there should be only one key name in the dict
-    # provided to this function (e.g. library, cell, pin, timing, etc.)
-    attr_name = next(iter(dict_))
     # this should always be true
     if constants_yaml_to_liberty_writer.LEVEL_TYPE_STR in dict_ and constants_yaml_to_liberty_writer.VALS_STR in dict_:
       vals_dict_or_list = dict_.get(constants_yaml_to_liberty_writer.VALS_STR)
+      #print("vals dict or list: ", str(vals_dict_or_list))
       # if vals is a list (e.g. timing.vals), process as list
       if isinstance(vals_dict_or_list, list):
         final_string = self.handle_list(attr_name, vals_dict_or_list, accum_str, 0)
       # if vals is a dict (e.g. cell_rise.vals), process as dict
       elif isinstance(vals_dict_or_list, dict):
+        #print("entering handle dict")
         final_string = self.handle_dict(attr_name, vals_dict_or_list, accum_str, 0)
 
     return self.remove_blank_lines(final_string)
