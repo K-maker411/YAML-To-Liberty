@@ -151,13 +151,6 @@ class YamlToLibertyWriter:
         # we are on a list of dicts (e.g. cell in YAML has a list of cells, and when we get the first one in this function,
         # we are on a cell dict, thus we plug in attr_name, which was cell)
         accum_str = self.handle_dict(attr_name, item, accum_str, num_indents)
-      # when would this even happen (can it happen)?
-      elif isinstance(item, list):
-        pass
-        #accum_str += self.handle_list(item, accum_str, num_indents + 2)
-      else:
-        # is this a valid case?
-        pass
 
     return accum_str
         
@@ -165,10 +158,11 @@ class YamlToLibertyWriter:
   def handle_dict(self, attr_name, dict_, accum_str, num_indents):
     indents = " " * num_indents
     # add to accum_str
-    # TODO - figure out how to put the stuff in parentheses later
-    # TODO - check if this is necessary
-    #print("adding to accum_str: " + indents + attr_name + "() {\n")
-    accum_str += indents + attr_name + "() {\n"
+    key_starting_with_param_indicator = [key for key in dict_.keys() if key.startswith(constants_yaml_to_liberty_writer.PARAM_INDICATOR_CHAR)]
+    if len(key_starting_with_param_indicator) > 0:
+      accum_str += indents + attr_name + "(" + dict_.get(key_starting_with_param_indicator[0]) + ") {\n"
+    else:
+      accum_str += indents + attr_name + "() {\n"
     # key is attribute name, value is attribute value
     for key, value in dict_.items():
       #print("key: " + key)
@@ -199,15 +193,11 @@ class YamlToLibertyWriter:
           elif value.get(constants_yaml_to_liberty_writer.LEVEL_TYPE_STR) == constants_yaml_to_liberty_writer.COMPLEX_STR:
             vals = value.get(constants_yaml_to_liberty_writer.VALS_STR)
             accum_str = self.handle_complex_attribute(key, vals, accum_str, num_indents + 2)
-        
-      elif isinstance(value, list):
-        # i don't think this is possible, since it would just be a complex attribute, but the YAML for that has already changed
-        #print("ERROR: this is not possible - value in handle_dict is a list")
-        pass
       # must be simple attribute
       else:
         #print("handling simple attribute: " + key)
-        accum_str = self.handle_simple_attribute(key, value, accum_str, num_indents + 2)
+        if not key.startswith(constants_yaml_to_liberty_writer.PARAM_INDICATOR_CHAR):
+          accum_str = self.handle_simple_attribute(key, value, accum_str, num_indents + 2)
         
     return accum_str + indents + "}\n"
 

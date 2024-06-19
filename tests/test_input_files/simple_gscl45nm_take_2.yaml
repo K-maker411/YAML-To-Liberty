@@ -1,7 +1,7 @@
 library:
   level_type: "group"
   vals:
-    name: "gscl45nm"
+    $name: "gscl45nm"
     delay_model: "table_lookup"
     in_place_swap_mode: "match_footprint"
     # unit attributes
@@ -29,7 +29,7 @@ library:
     operating_conditions:
       level_type: "group"
       vals:
-        name: "typical"
+        $name: "typical"
         process: 1
         voltage: 1.1
         temperature: 27
@@ -37,19 +37,19 @@ library:
     cell:
       level_type: "group"
       vals: 
-      - name: "BUFX2"
+      - $name: "BUFX2"
         cell_footprint: "buf"
         area: 2.346500
         cell_leakage_power: 19.7536
         pin:
           level_type: "group"
           vals: 
-          - name: "A"
+          - $name: "A"
             direction: "input"
             capacitance: 0.00153896
             rise_capacitance: 0.00153896
             fall_capacitance: 0.00150415
-          - name: "Y"
+          - $name: "Y"
             direction: "output"
             capacitance: 0
             rise_capacitance: 0
@@ -64,30 +64,30 @@ library:
                 cell_rise:
                   level_type: "group"
                   vals:
-                    cell_template: "scalar"
+                    $cell_template: "scalar"
                     values: 
                       level_type: "complex"
                       vals: [0.0]
                 rise_transition: 
                   level_type: "group"
                   vals:
-                    cell_template: "scalar"
+                    $cell_template: "scalar"
                     values: 
                       level_type: "complex"
                       vals: [0.0]
                 cell_fall:
                   level_type: "group"
                   vals:
-                    cell_template: "scalar"
+                    $cell_template: "scalar"
                     values:
                       level_type: "complex"
                       vals: [0.0]
                 fall_transition:
                   level_type: "group"
                   vals:
-                    cell_template: "scalar"
+                    $cell_template: "scalar"
                     values: 
                       level_type: "complex"
                       vals: [0.0]
-      - name: "BUFX1"
+      - $name: "BUFX1"
         cell_footprint: "buf"

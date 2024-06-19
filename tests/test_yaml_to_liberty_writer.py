@@ -516,8 +516,7 @@ def test_get_group_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_ta
 
   dict_5 = yaml_to_liberty_writer_simple_gscl45nm_take_2.yaml_file.get("library")
   
-  expected_1 = """operating_conditions() {
-  name : "typical";
+  expected_1 = """operating_conditions(typical) {
   process : "1";
   voltage : "1.1";
   temperature : "27";
@@ -526,33 +525,27 @@ def test_get_group_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_ta
   expected_2 = """timing() {
   related_pin : "A";
   timing_sense : "positive_unate";
-  cell_rise() {
-    cell_template : "scalar";
+  cell_rise(scalar) {
     values("0.0");
   }
-  rise_transition() {
-    cell_template : "scalar";
+  rise_transition(scalar) {
     values("0.0");
   }
-  cell_fall() {
-    cell_template : "scalar";
+  cell_fall(scalar) {
     values("0.0");
   }
-  fall_transition() {
-    cell_template : "scalar";
+  fall_transition(scalar) {
     values("0.0");
   }
 }"""
 
-  expected_3 = """pin() {
-  name : "A";
+  expected_3 = """pin(A) {
   direction : "input";
   capacitance : "0.00153896";
   rise_capacitance : "0.00153896";
   fall_capacitance : "0.00150415";
 }
-pin() {
-  name : "Y";
+pin(Y) {
   direction : "output";
   capacitance : "0";
   rise_capacitance : "0";
@@ -562,39 +555,32 @@ pin() {
   timing() {
     related_pin : "A";
     timing_sense : "positive_unate";
-    cell_rise() {
-      cell_template : "scalar";
+    cell_rise(scalar) {
       values("0.0");
     }
-    rise_transition() {
-      cell_template : "scalar";
+    rise_transition(scalar) {
       values("0.0");
     }
-    cell_fall() {
-      cell_template : "scalar";
+    cell_fall(scalar) {
       values("0.0");
     }
-    fall_transition() {
-      cell_template : "scalar";
+    fall_transition(scalar) {
       values("0.0");
     }
   }
 }"""
 
-  expected_4 = """cell() {
-  name : "BUFX2";
+  expected_4 = """cell(BUFX2) {
   cell_footprint : "buf";
   area : "2.3465";
   cell_leakage_power : "19.7536";
-  pin() {
-    name : "A";
+  pin(A) {
     direction : "input";
     capacitance : "0.00153896";
     rise_capacitance : "0.00153896";
     fall_capacitance : "0.00150415";
   }
-  pin() {
-    name : "Y";
+  pin(Y) {
     direction : "output";
     capacitance : "0";
     rise_capacitance : "0";
@@ -604,32 +590,26 @@ pin() {
     timing() {
       related_pin : "A";
       timing_sense : "positive_unate";
-      cell_rise() {
-        cell_template : "scalar";
+      cell_rise(scalar) {
         values("0.0");
       }
-      rise_transition() {
-        cell_template : "scalar";
+      rise_transition(scalar) {
         values("0.0");
       }
-      cell_fall() {
-        cell_template : "scalar";
+      cell_fall(scalar) {
         values("0.0");
       }
-      fall_transition() {
-        cell_template : "scalar";
+      fall_transition(scalar) {
         values("0.0");
       }
     }
   }
 }
-cell() {
-  name : "BUFX1";
+cell(BUFX1) {
   cell_footprint : "buf";
 }"""
 
-  expected_5 = """library() {
-  name : "gscl45nm";
+  expected_5 = """library(gscl45nm) {
   delay_model : "table_lookup";
   in_place_swap_mode : "match_footprint";
   time_unit : "1ns";
@@ -649,27 +629,23 @@ cell() {
   nom_process : "1";
   nom_voltage : "1.1";
   nom_temperature : "27";
-  operating_conditions() {
-    name : "typical";
+  operating_conditions(typical) {
     process : "1";
     voltage : "1.1";
     temperature : "27";
   }
   default_operating_conditions : "typical";
-  cell() {
-    name : "BUFX2";
+  cell(BUFX2) {
     cell_footprint : "buf";
     area : "2.3465";
     cell_leakage_power : "19.7536";
-    pin() {
-      name : "A";
+    pin(A) {
       direction : "input";
       capacitance : "0.00153896";
       rise_capacitance : "0.00153896";
       fall_capacitance : "0.00150415";
     }
-    pin() {
-      name : "Y";
+    pin(Y) {
       direction : "output";
       capacitance : "0";
       rise_capacitance : "0";
@@ -679,27 +655,22 @@ cell() {
       timing() {
         related_pin : "A";
         timing_sense : "positive_unate";
-        cell_rise() {
-          cell_template : "scalar";
+        cell_rise(scalar) {
           values("0.0");
         }
-        rise_transition() {
-          cell_template : "scalar";
+        rise_transition(scalar) {
           values("0.0");
         }
-        cell_fall() {
-          cell_template : "scalar";
+        cell_fall(scalar) {
           values("0.0");
         }
-        fall_transition() {
-          cell_template : "scalar";
+        fall_transition(scalar) {
           values("0.0");
         }
       }
     }
   }
-  cell() {
-    name : "BUFX1";
+  cell(BUFX1) {
     cell_footprint : "buf";
   }
 }"""
