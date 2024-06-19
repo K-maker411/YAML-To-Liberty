@@ -32,6 +32,7 @@ SEED_TEST_GSCL45NM_LIB_PATH = Path(
     "tests/test_input_files/seed_test_gscl45nm.lib").absolute()
 SEED_TEST_GSCL45NM_YAML_PATH = Path(
     "tests/test_input_files/seed_test_gscl45nm.yaml").absolute()
+SIMPLE_GSCL45NM_TAKE_2_YAML_PATH = Path("tests/test_input_files/simple_gscl45nm_take_2.yaml")
 
 
 @pytest.fixture
@@ -131,4 +132,9 @@ def seed_test_gscl45nm_lib_file():
 @pytest.fixture
 def seed_test_gscl45nm_yaml_file():
   with open(SEED_TEST_GSCL45NM_YAML_PATH, 'r') as file:
+    yield file
+
+@pytest.fixture
+def simple_gscl45nm_take_2_yaml_file():
+  with open(SIMPLE_GSCL45NM_TAKE_2_YAML_PATH, 'r') as file:
     yield file

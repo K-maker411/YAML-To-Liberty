@@ -32,7 +32,10 @@ NAME = "name"
 CAPACITIVE_LOAD_UNIT = "capacitive_load_unit"
 OPERATING_CONDITIONS = "operating_conditions"
 
-
+LEVEL_TYPE_STR = "level_type"
+VALS_STR = "vals"
+GROUP_STR = "group"
+COMPLEX_STR = "complex"
 
 INSIDE_LIBRARY_NUM_SPACES = 2
 INSIDE_CELL_GROUP_NUM_SPACES = 4

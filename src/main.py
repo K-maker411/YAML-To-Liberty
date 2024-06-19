@@ -5,8 +5,16 @@ import pathlib
 from src.yaml_to_liberty_writer import YamlToLibertyWriter
 from src.attributes_provider import AttributesProvider
 from src import constants_yaml_to_liberty_writer
+from liberty.parser import parse_liberty
+
 
 def main():  
+  '''
+  lib_file_path = "tests/test_input_files/seed_test_gscl45nm.lib"
+  with open(lib_file_path, 'r') as f:
+    library = parse_liberty(f.read())
+    print(str(library))
+  '''
   parser = argparse.ArgumentParser(
     prog="YAMLToLibertyWriter",
     description="Converts YAML information into Liberty format using existing Liberty file attributes.")
