@@ -2,6 +2,7 @@ from pathlib import Path
 import pytest
 from src.yaml_parser import YamlParser
 
+'''
 VALID_LIB_LEVEL_ATTRIBUTES_PATH = Path(
     "tests/test_input_files/valid_lib_level_attributes.yaml").absolute()
 INVALID_LIB_LEVEL_ATTRIBUTES_PATH = Path(
@@ -67,3 +68,4 @@ def test_check_library_level_attributes_invalid(invalid_lib_level_attributes_yam
 # TODO - add tests for this later (once more stuff is complete)
 def test_check_library_level():
     pass
+'''

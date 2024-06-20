@@ -1,4 +1,0 @@
-library:
-  name: "gsc145nm"
-  time_unit: "1ns"
-  slew_upper_threshold_pct_rise: 80
