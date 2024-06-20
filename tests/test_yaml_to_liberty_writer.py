@@ -2,11 +2,15 @@ import pytest
 from pathlib import Path
 from src.yaml_to_liberty_writer import YamlToLibertyWriter
 from src import constants_yaml_to_liberty_writer
+import yaml
 
 @pytest.fixture
-def yaml_to_liberty_writer_simple_gscl45nm_yaml_file(
-    simple_gscl45nm_yaml_file):
-  return YamlToLibertyWriter(simple_gscl45nm_yaml_file)
+def yaml_to_liberty_writer_simple_gscl45nm_yaml_file():
+  return YamlToLibertyWriter()
+
+@pytest.fixture
+def simple_gscl45nm_dict(simple_gscl45nm_yaml_file):
+  return yaml.safe_load(simple_gscl45nm_yaml_file)
 
 def test_get_simple_attr_as_string(yaml_to_liberty_writer_simple_gscl45nm_yaml_file):
   attr_1 = "time_unit"
@@ -42,16 +46,16 @@ def test_get_complex_attr_as_string(yaml_to_liberty_writer_simple_gscl45nm_yaml_
   assert repr(yaml_to_liberty_writer_simple_gscl45nm_yaml_file.get_complex_attr_as_string(attr_2, value_2)) == repr(expected_2)
   assert repr(yaml_to_liberty_writer_simple_gscl45nm_yaml_file.get_complex_attr_as_string(attr_3, value_3) == repr(expected_3))
 
-def test_get_group_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_yaml_file):
-  dict_1 = yaml_to_liberty_writer_simple_gscl45nm_yaml_file.yaml_file.get("library").get("vals").get("operating_conditions")
+def test_get_group_as_string_recursive(yaml_to_liberty_writer_simple_gscl45nm_yaml_file, simple_gscl45nm_dict):
+  dict_1 = simple_gscl45nm_dict.get("library").get("vals").get("operating_conditions")
 
-  dict_2 = yaml_to_liberty_writer_simple_gscl45nm_yaml_file.yaml_file.get("library").get("vals").get("cell").get("vals")[0].get("pin").get("vals")[1].get("timing")
+  dict_2 = simple_gscl45nm_dict.get("library").get("vals").get("cell").get("vals")[0].get("pin").get("vals")[1].get("timing")
 
-  dict_3 = yaml_to_liberty_writer_simple_gscl45nm_yaml_file.yaml_file.get("library").get("vals").get("cell").get("vals")[0].get("pin")
+  dict_3 = simple_gscl45nm_dict.get("library").get("vals").get("cell").get("vals")[0].get("pin")
 
-  dict_4 = yaml_to_liberty_writer_simple_gscl45nm_yaml_file.yaml_file.get("library").get("vals").get("cell")
+  dict_4 = simple_gscl45nm_dict.get("library").get("vals").get("cell")
 
-  dict_5 = yaml_to_liberty_writer_simple_gscl45nm_yaml_file.yaml_file.get("library")
+  dict_5 = simple_gscl45nm_dict.get("library")
   
   expected_1 = """operating_conditions(typical) {
   process : "1";

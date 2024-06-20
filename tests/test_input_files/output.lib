@@ -1,0 +1,78 @@
+library(gscl45nm) {
+  delay_model : "table_lookup";
+  in_place_swap_mode : "match_footprint";
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1uA";
+  pulling_resistance_unit : "1kohm";
+  leakage_power_unit : "1nW";
+  capacitive_load_unit(1, pf);
+  slew_upper_threshold_pct_rise : "80";
+  slew_lower_threshold_pct_rise : "20";
+  slew_upper_threshold_pct_fall : "80";
+  slew_lower_threshold_pct_fall : "20";
+  input_threshold_pct_rise : "50";
+  input_threshold_pct_fall : "50";
+  output_threshold_pct_rise : "50";
+  output_threshold_pct_fall : "50";
+  nom_process : "1";
+  nom_voltage : "1.1";
+  nom_temperature : "27";
+  operating_conditions(typical) {
+    process : "1";
+    voltage : "1.1";
+    temperature : "27";
+  }
+  default_operating_conditions : "typical";
+  cell(BUFX2) {
+    cell_footprint : "buf";
+    area : "2.3465";
+    cell_leakage_power : "19.7536";
+    pin(A) {
+      direction : "input";
+      capacitance : "0.00153896";
+      rise_capacitance : "0.00153896";
+      fall_capacitance : "0.00150415";
+    }
+    pin(Y) {
+      direction : "output";
+      capacitance : "0";
+      rise_capacitance : "0";
+      fall_capacitance : "0";
+      max_capacitance : "0.518678";
+      function : "A";
+      timing() {
+        related_pin : "A";
+        timing_sense : "positive_unate";
+        cell_rise(scalar) {
+          values("0.0");
+        }
+        rise_transition(scalar) {
+          values("0.0");
+        }
+        cell_fall(scalar) {
+          values("0.0");
+        }
+        fall_transition(scalar) {
+          values("0.0");
+        }
+      }
+      internal_power() {
+        rise_power(energy_template_6x6) {
+          index_1("0.1, 0.5, 1.2, 3, 4, 5");
+          index_2("0.06, 0.24, 0.48, 0.9, 1.2, 1.8");
+          values( \
+          "0.007629, 0.007814, 0.008527, 0.011, 0.013036, 0.021415", \
+          "0.007847, 0.007969, 0.008127, 0.008954, 0.01012, 0.013793", \
+          "0.007598, 0.007574, 0.008075, 0.008447, 0.009083, 0.011614", \
+          "0.008148, 0.008291, 0.008042, 0.008235, 0.008524, 0.009792", \
+          "0.007902, 0.007896, 0.008061, 0.008321, 0.008456, 0.009447", \
+          "0.008154, 0.008144, 0.008174, 0.008374, 0.008494, 0.009334");
+        }
+      }
+    }
+  }
+  cell(BUFX1) {
+    cell_footprint : "buf";
+  }
+}

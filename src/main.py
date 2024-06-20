@@ -2,9 +2,10 @@
 
 import argparse
 import pathlib
-from src.yaml_to_liberty_writer import YamlToLibertyWriter
-from src import constants_yaml_to_liberty_writer
+from yaml_to_liberty_writer import YamlToLibertyWriter
+#from src import constants_yaml_to_liberty_writer
 from liberty.parser import parse_liberty
+import yaml
 
 
 def main():  
@@ -20,8 +21,9 @@ def main():
     with open(args.input_file_path, 'r') as input, \
          open(args.output_file_path, 'w') as output:
            
-      y2l = YamlToLibertyWriter(input)
-      library_str = y2l.get_group_as_string_recursive("library", input)
+      y2l = YamlToLibertyWriter()
+      dict_ = yaml.safe_load(input).get("library")
+      library_str = y2l.get_group_as_string_recursive("library", dict_)
       output.write(library_str)
       print("Writing successful!")
   

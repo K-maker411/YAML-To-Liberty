@@ -1,4 +1,4 @@
-from src import constants_yaml_to_liberty_writer
+import constants_yaml_to_liberty_writer
 import yaml
 
 
@@ -7,8 +7,7 @@ class YamlToLibertyWriter:
 
   # NOTE - this assumes that if seed_lib_file is provided, then open(seed_lib_file_path) has already been done,
   # and that the result of open(seed_lib_path) is being passed in
-  def __init__(self, yaml_file_read_stream, seed_lib_file=None):
-    self.yaml_file = yaml.safe_load(yaml_file_read_stream)
+  def __init__(self, seed_lib_file=None):
     self.seed_lib_file = seed_lib_file
 
   # removes only completely blank lines from given string
