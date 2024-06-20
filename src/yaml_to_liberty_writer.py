@@ -116,14 +116,34 @@ class YamlToLibertyWriter:
           full_string += str(value[index]) + ", "
       
     else:
-      # for now, every complex attribute (except the above) will have quotes (this might change)
-      full_string += "\""
-      for index in range(0, len(value)):
-        if index == len(value) - 1:
-          full_string += str(value[index]) + "\");"
-        else:
-          full_string += str(value[index]) + ", "
+
+      # check if value (given vals) is 2D array
+      # (possibly crude check)
+      if isinstance(value[0], list):
+        full_string += " \\" + "\n"
+        # if so, process both layers
+        for index_1 in range(0, len(value)):
+          full_string += "\""
+          for index_2 in range(0, len(value[index_1])):
+            if index_2 == len(value[index_1]) - 1:
+              full_string += str(value[index_1][index_2])
+            else:
+              full_string += str(value[index_1][index_2]) + ", "
           
+          if index_1 == len(value) - 1:
+            full_string += "\");"
+          else:
+            full_string += "\", \\" + "\n"
+          
+      
+      # for now, every complex attribute (except the above) will have quotes (this might change)
+      else:
+        full_string += "\""
+        for index in range(0, len(value)):
+          if index == len(value) - 1:
+            full_string += str(value[index]) + "\");"
+          else:
+            full_string += str(value[index]) + ", "
     return full_string + "\n"
 
   # does simple string to lib string conversion and indents
@@ -138,8 +158,14 @@ class YamlToLibertyWriter:
     indents = " " * num_indents
     # attr_value is list of values
     # this assumes that \n was already done on accum_str
-    new_string = accum_str + indents + self.get_complex_attr_as_string(attr_name, attr_value)
-    return new_string
+    complex_attr_as_string = self.get_complex_attr_as_string(attr_name, attr_value)
+    # every complex_attr_as_string gets a \n at the very end, so if there are more than 2 lines (meaning
+    # more than one newline), then we know to do the indents
+    if len(complex_attr_as_string.splitlines()) > 2:
+      return accum_str + "\n".join(indents + line for line in complex_attr_as_string.splitlines()) + "\n"
+    else:
+      return accum_str + indents + self.get_complex_attr_as_string(attr_name, attr_value)
+    
   
   def handle_list(self, attr_name, list_, accum_str, num_indents):
     for index in range(0, len(list_)):
