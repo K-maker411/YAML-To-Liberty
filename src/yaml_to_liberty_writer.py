@@ -1,5 +1,6 @@
 import constants_yaml_to_liberty_writer
 import yaml
+from liberty.types import EscapedString, Group
 
 
 # converts from given YAML to Liberty .lib file
@@ -14,6 +15,30 @@ class YamlToLibertyWriter:
   def remove_blank_lines(self, s):
     return "\n".join(line for line in s.splitlines() if line.strip())
 
+  # gets simple, default, scaling, and complex attrs from group as dict
+  def get_simple_and_complex_attrs_from_seed_group_as_dict(self, group_: Group):
+    dict_ = {}
+    for attr in group_.attributes:
+      # complex attribute
+      if isinstance(attr.value, list):
+        dict_.update({attr.name: {"level_type": "complex", "vals": attr.value}})
+      # simple, default, or scaling
+      elif isinstance(attr.value, str):
+        # remove double quotes around values if they exist
+        dict_.update({attr.name: attr.value.replace('"', "")})
+      elif isinstance(attr.value, EscapedString):
+        dict_.update({attr.name: str(attr.value).replace('"', "")})
+      else:
+        dict_.update({attr.name: attr.value})
+
+    return dict_
+
+  def get_group_attr_from_seed_as_dict_helper(self, group_: Group):
+    dict_ = {}
+    for g in group_.groups:
+      
+      
+  
   # Currently unused, but may be useful in the future
   # works for floats, bools, value_enums, anything else that doesn't use double quotes around the value (possibly others)
   def get_attr_as_string_basic(self, attr, dict_containing_attr):
@@ -188,3 +213,13 @@ class YamlToLibertyWriter:
                                         accum_str, 0)
 
     return self.remove_blank_lines(final_string)
+
+
+
+  def seed_at_lib_level(self):
+    # How do I do this? "Easiest" might be to convert the liberty-parser values 
+    # to the dict format I set up for the YAML, then do lib-parser-dict.update(yaml_as_dict_)
+    # 1. Simple/default/scaling are easy enough - just {attr_name: value} from lib-parser
+    # 2. Complex is likely also not that difficult, since I've updated my YAML to use arrays for the values
+    # 3. Groups are more challenging
+    pass
