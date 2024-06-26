@@ -256,6 +256,9 @@ cell(BUFX1) {
     cell_footprint : "buf";
   }
 }"""
+
+  print("Expected: \n" + expected_1)
+  print("Actual: \n" + yaml_to_liberty_writer_simple_gscl45nm.get_group_as_string_recursive("operating_conditions", dict_1))
   
   assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_group_as_string_recursive("operating_conditions", dict_1)) == repr(expected_1)
 
@@ -268,8 +271,8 @@ cell(BUFX1) {
   assert repr(yaml_to_liberty_writer_simple_gscl45nm.get_group_as_string_recursive("library", dict_5)) == repr(expected_5)
   
 
-def test_get_simple_and_complex_attrs_from_seed_as_dict(yaml_to_liberty_writer_simple_gscl45nm, seed_test_gscl45nm_lib_file):
-  seed_test_gscl45nm_lib_file_dict = yaml_to_liberty_writer_simple_gscl45nm.get_simple_and_complex_attrs_from_seed_as_dict(parse_liberty(seed_test_gscl45nm_lib_file.read()))
+def test_get_simple_and_complex_attrs_from_seed_group_as_dict(yaml_to_liberty_writer_simple_gscl45nm, seed_test_gscl45nm_lib_file):
+  seed_test_gscl45nm_lib_file_dict = yaml_to_liberty_writer_simple_gscl45nm.get_simple_and_complex_attrs_from_seed_group_as_dict(parse_liberty(seed_test_gscl45nm_lib_file.read()))
 
   expected = {"delay_model": "table_lookup", "in_place_swap_mode": "match_footprint", "time_unit": "1ns", "voltage_unit": "1V", "current_unit": "1uA", "pulling_resistance_unit": "1kohm", "leakage_power_unit": "1nW", "capacitive_load_unit": {"level_type": "complex", "vals": [1, "pf"]}, "slew_upper_threshold_pct_rise": 80, "slew_lower_threshold_pct_rise": 20, "slew_upper_threshold_pct_fall": 80, "slew_lower_threshold_pct_fall": 20, "input_threshold_pct_rise": 50, "input_threshold_pct_fall": 50, "output_threshold_pct_rise": 50, "output_threshold_pct_fall": 50, "nom_process": 1, "nom_voltage": 1.1, "nom_temperature": 27, "default_operating_conditions": "typical"}
 

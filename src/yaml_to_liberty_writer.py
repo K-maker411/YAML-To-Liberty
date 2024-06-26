@@ -33,10 +33,16 @@ class YamlToLibertyWriter:
 
     return dict_
 
-  def get_group_attr_from_seed_as_dict_helper(self, group_: Group):
+  '''
+  def get_non_nested_group_attr_from_seed_as_dict(self, group_: Group):
     dict_ = {}
     for g in group_.groups:
-      
+      # if there are NO nested groups
+      if len(g.groups) == 0:
+        # there are no other groups in this group, so just process as normal
+        group_as_dict = {"level_type": "group", "vals": {constants_yaml_to_liberty_writer.PARAM_INDICATOR_CHAR: }}
+        dict_.update(self.get_simple_and_complex_attrs_from_seed_group_as_dict(g))
+  '''   
       
   
   # Currently unused, but may be useful in the future
@@ -153,8 +159,21 @@ class YamlToLibertyWriter:
     # if there is a key that starts with PARAM_INDICATOR_CHAR (currently $), then we need to put the value
     # associated with that key in the parens for that group (e.g. "gscl45nm" in library(gscl45nm))
     if len(key_starting_with_param_indicator) > 0:
-      accum_str += indents + attr_name + "(" + dict_.get(
-          key_starting_with_param_indicator[0]) + ") {\n"
+      accum_str += indents + attr_name + "("
+      for key in key_starting_with_param_indicator:
+        # if there is a list of values associated with the key, then we need to handle that
+        if isinstance(dict_[key], list):
+          accum_str += "\""
+          for index in range(0, len(dict_[key])):
+            accum_str += str(dict_[key][index])
+          accum_str += "\""
+        else:
+          accum_str += dict_.get(key) 
+        accum_str += ", "
+        
+      # remove the extra ", " at the end
+      accum_str = accum_str.removesuffix(", ")
+      accum_str += ") {\n"
     # otherwise, just add the parens to indicate group (e.g. timing())
     else:
       accum_str += indents + attr_name + "() {\n"
