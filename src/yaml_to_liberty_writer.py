@@ -54,33 +54,36 @@ class YamlToLibertyWriter:
   
   def get_non_nested_group_attr_from_seed_as_dict(self, group_: Group):
     dict_ = {}
+    dict_.update(self.get_simple_and_complex_attrs_from_seed_group_as_dict(group_))
     for g in group_.groups:
       # if there are NO nested groups in g (e.g. library.groups("operating_conditions").groups)
       if len(g.groups) == 0:
         # there are no other groups in this group, so just process as normal
-        
         # if there is more than 1 instance of a group with this name
         if self.num_groups_with_given_name(group_.groups, g.group_name) > 1: 
-          # g.group_name is not already in dict_, so list doesn't exist
           if g.group_name not in dict_:
             list_ = []
             updated_dict = self.get_non_nested_group_attr_from_seed_as_dict_helper(g)
             list_.append(updated_dict)
+            #dict_[constants_yaml_to_liberty_writer.VALS_STR].update({g.group_name: {"level_type": "group", "vals": list_}})
             dict_.update({g.group_name: {"level_type": "group", "vals": list_}})
-          # g.group_name is already in dict_ (and is guaranteed to be a list), so get list and add to it
+            # g.group_name is already in dict_ (and is guaranteed to be a list), so get list and add to it
           else:
             dict_at_group_name = dict_.get(g.group_name)
             if dict_at_group_name:
               list_ = dict_at_group_name.get("vals")
               updated_dict = self.get_non_nested_group_attr_from_seed_as_dict_helper(g)
               list_.append(updated_dict)
+              #dict_[constants_yaml_to_liberty_writer.VALS_STR].update({g.group_name: {"level_type": "group", "vals": list_}})
               dict_.update({g.group_name: {"level_type": "group", "vals": list_}})
             
         # otherwise, there is only 1 instance of a group with this name
         else:
           updated_dict = self.get_non_nested_group_attr_from_seed_as_dict_helper(g)
+          #dict_[constants_yaml_to_liberty_writer.VALS_STR].update({g.group_name: {"level_type": "group", "vals": updated_dict}})
           dict_.update({g.group_name: {"level_type": "group", "vals": updated_dict}})
-        
+
+    
     return dict_
   
       
@@ -275,7 +278,7 @@ class YamlToLibertyWriter:
 
 
 
-  def seed_at_lib_level(self):
+  def get_group_as_string_recusri(self):
     # How do I do this? "Easiest" might be to convert the liberty-parser values 
     # to the dict format I set up for the YAML, then do lib-parser-dict.update(yaml_as_dict_)
     # 1. Simple/default/scaling are easy enough - just {attr_name: value} from lib-parser
