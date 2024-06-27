@@ -1,5 +1,4 @@
 import constants_yaml_to_liberty_writer
-import yaml
 from liberty.types import EscapedString, Group
 
 
@@ -33,16 +32,57 @@ class YamlToLibertyWriter:
 
     return dict_
 
-  '''
+
+  def num_groups_with_given_name(self, group_list, group_name):
+    num_groups = 0
+    for g in group_list:
+      if g.group_name == group_name:
+        num_groups += 1
+    return num_groups
+
+
+  def get_non_nested_group_attr_from_seed_as_dict_helper(self, g: Group):
+    params_dict = {}
+    current_idx = 0
+    for arg in g.args:
+      # as long as the param indicator char is at the front of the key, it will be used, so the name doesn't matter (as long as it's unique, hence the current_idx)
+      params_dict.update({constants_yaml_to_liberty_writer.PARAM_INDICATOR_CHAR + str(current_idx): arg})
+      current_idx += 1
+    g_simple_complex_attrs_dict = self.get_simple_and_complex_attrs_from_seed_group_as_dict(g)
+    params_dict.update(g_simple_complex_attrs_dict)
+    return params_dict
+  
   def get_non_nested_group_attr_from_seed_as_dict(self, group_: Group):
     dict_ = {}
     for g in group_.groups:
-      # if there are NO nested groups
+      # if there are NO nested groups in g (e.g. library.groups("operating_conditions").groups)
       if len(g.groups) == 0:
         # there are no other groups in this group, so just process as normal
-        group_as_dict = {"level_type": "group", "vals": {constants_yaml_to_liberty_writer.PARAM_INDICATOR_CHAR: }}
-        dict_.update(self.get_simple_and_complex_attrs_from_seed_group_as_dict(g))
-  '''   
+        
+        # if there is more than 1 instance of a group with this name
+        if self.num_groups_with_given_name(group_.groups, g.group_name) > 1: 
+          # g.group_name is not already in dict_, so list doesn't exist
+          if g.group_name not in dict_:
+            list_ = []
+            updated_dict = self.get_non_nested_group_attr_from_seed_as_dict_helper(g)
+            list_.append(updated_dict)
+            dict_.update({g.group_name: {"level_type": "group", "vals": list_}})
+          # g.group_name is already in dict_ (and is guaranteed to be a list), so get list and add to it
+          else:
+            dict_at_group_name = dict_.get(g.group_name)
+            if dict_at_group_name:
+              list_ = dict_at_group_name.get("vals")
+              updated_dict = self.get_non_nested_group_attr_from_seed_as_dict_helper(g)
+              list_.append(updated_dict)
+              dict_.update({g.group_name: {"level_type": "group", "vals": list_}})
+            
+        # otherwise, there is only 1 instance of a group with this name
+        else:
+          updated_dict = self.get_non_nested_group_attr_from_seed_as_dict_helper(g)
+          dict_.update({g.group_name: {"level_type": "group", "vals": updated_dict}})
+        
+    return dict_
+  
       
   
   # Currently unused, but may be useful in the future

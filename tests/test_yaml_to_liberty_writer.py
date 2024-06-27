@@ -280,3 +280,48 @@ def test_get_simple_and_complex_attrs_from_seed_group_as_dict(yaml_to_liberty_wr
   print("Expected: \n" + str(expected))
   
   assert seed_test_gscl45nm_lib_file_dict == expected
+
+def test_get_non_nested_group_attr_from_seed_as_dict(yaml_to_liberty_writer_simple_gscl45nm, seed_test_gscl45nm_lib_file):
+  seed_test_gscl45nm_lib_file_dict = yaml_to_liberty_writer_simple_gscl45nm.get_non_nested_group_attr_from_seed_as_dict(parse_liberty(seed_test_gscl45nm_lib_file.read()))
+
+  expected = {"operating_conditions": 
+              {"level_type": "group", "vals": {"$0": "typical", "process": 1, "voltage": 1.1, "temperature": 27}}, 
+              "lu_table_template": 
+              {"level_type": "group", "vals": 
+               [
+                 {"$0": "delay_template_4x5", "variable_1": "total_output_net_capacitance", "variable_2": "input_net_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0"]}},
+                 
+                 {"$0": "delay_template_5x1", "variable_1": "input_net_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0"]}},
+                 
+                 {"$0": "delay_template_6x1", "variable_1": "input_net_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+                 
+                 {"$0": "delay_template_6x6", "variable_1": "total_output_net_capacitance", "variable_2": "input_net_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+                 
+                 {"$0": "hold_template_3x6", "variable_1": "related_pin_transition", "variable_2": "constrained_pin_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+
+                 {"$0": "recovery_template_3x6", "variable_1": "related_pin_transition", "variable_2": "constrained_pin_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+
+                 {"$0": "recovery_template_6x6", "variable_1": "related_pin_transition", "variable_2": "constrained_pin_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+
+                 {"$0": "removal_template_3x6", "variable_1": "related_pin_transition", "variable_2": "constrained_pin_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+
+                 {"$0": "setup_template_3x6", "variable_1": "related_pin_transition", "variable_2": "constrained_pin_transition", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+               ]},
+             
+             "power_lut_template": 
+             {"level_type": "group", "vals": 
+              [
+                {"$0": "energy_template_4x5", "variable_1": "total_output_net_capacitance", "variable_2": "input_transition_time", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0"]}},
+                
+                {"$0": "energy_template_6x6", "variable_1": "total_output_net_capacitance", "variable_2": "input_transition_time", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}, "index_2": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+              
+                {"$0": "passive_energy_template_5x1", "variable_1": "input_transition_time", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0"]}},
+                
+                {"$0": "passive_energy_template_6x1", "variable_1": "input_transition_time", "index_1": {"level_type": "complex", "vals": ["1000.0, 1001.0, 1002.0, 1003.0, 1004.0, 1005.0"]}},
+                
+              ]}}
+  print("Expected: \n" + str(expected))
+  print("Actual: \n" + str(seed_test_gscl45nm_lib_file_dict))
+  assert seed_test_gscl45nm_lib_file_dict == expected
+
+  
